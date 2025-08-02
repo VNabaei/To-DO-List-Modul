@@ -18,20 +18,35 @@ def Create_New_list(name = str):
         else :
             delete_List(file_path)
             Create_New_list(name)
-    ddline_input = input("inter the DDline exp: (7/31/2025)") # در اینجا یه برسی مقدار داده شده هم اجرا شود.
-    if ddline_input :
-        try:
-            ddline_date = datetime.strptime(ddline_input, "%Y-%m-%d").date()
-            if ddline_date < datetime.today().date():
-                print("DDline can not be in pass")
-                return
-        except ValueError:
-            print("the format is wrong")
-            return
-    Add_Task(file_path,ddline_date)    
+    while True:
+        ddline_input = input("inter the DDline (Year/month/day) e.g. : 2025/07/31  : ") # در اینجا یه برسی مقدار داده شده هم اجرا شود.
+        if ddline_input :
+            try:
+                ddline_date = datetime.strptime(ddline_input, "%Y/%m/%d").date()
+                if ddline_date < datetime.today().date():
+                    print("DDline can not be in pass")
+                    continue
+            except ValueError:
+                print("the format is wrong")
+                print("Please enter the date in the format Y/M/D (e.g.: 2025/07/31)")
+                continue
+            break #exit the loop if date is valid
+        else:
+            ddline_date = datetime.today().date()
+            print("DDline is set to today")
+            break #exit the loop if no date is provided
+            
+    input("Do you want add tasks to this list (y/n)? : ")
+    if input().upper() == 'Y':
+        Add_Task(file_path)
+    else:
+        print("No tasks added to the list.")
+    print(f"List {name} created successfully at {file_path}")
+    return file_path
         
         
-def Add_Task (FileTDS,DDLine):
+def Add_Task (FileTDS):
+    
     tasks = []
     while True :
         task = input("input the task, for break,input nothing!")

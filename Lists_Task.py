@@ -24,16 +24,16 @@ class To_Do_List:
     
     # --- constructor 
     def __init__ (self,List_Title : str):
-        
+        '''
         # -- the id format :
         #TLD-XXXX-TLD-YYYY-Date Time.
         #TLD : To Do List ,
         #TSK : task,
         #XXXXXXXX :counter of n-th todolist x in range (0,8),
         #YYYYYYYY: counter of m-th Task Y in range (0,8).
-        
-        self.TLDid  = f"TDL-{To_Do_List.list_counter:08d}"    # It's manual for now, I'll fix it later.😅
-        self.TotalId = creat_TotalId(self, "TSK-00000000")
+        '''
+        self.TDLid  = f"TDL-{To_Do_List.list_counter:08d}"    # It's manual for now, I'll fix it later.😅
+        self.TotalId = creat_TotalId(self)              
         
         self.tasks_counter = 0 # for create the TSK id.
         self.tasks= {} #put the tasks of TLD here.
@@ -41,7 +41,7 @@ class To_Do_List:
 
         self.history = []
         # history format = {action : ,idTask : , dateAction: , who: }
-        History("new Todo list",self.TLDid) 
+        History(self,"new Todo list",self.TDLid) 
         
         
         To_Do_List.list_counter += 1 #done !
@@ -166,19 +166,8 @@ class Task :
         print ("در صورت تمایل توضیحات را وارد کنید.")
         info = input("info :\n ")
         return info
-     
-    '''
-    چون جزئیات زیاد داره فعلا اینو بیخیال میشیم
-    def add_subtask(self):
-        n = input("how many subTask you want to add : ")
-        for i in n :
-            self.subtask.append(input(f"please inter the {i}-th subTask :  "))
-'''     
-    
-    
    
     
-  
     def Status (self)  :
         pass
         # وضعیت تسک را چک کن اگر اتمام نرسیده بود و فعال بوذ :
@@ -237,6 +226,25 @@ def creat_TotalId(TDL_item , TSK_item):
     '''
     TotalId = TDL_item.TDLid + "-" + TSK_item.TSKid
     return TotalId
+ 
+def creat_TotalId(TDL_item):
+    '''
+    this function creat total id without task
+
+    Parameters
+    ----------
+    TDL_item :  To_Do_List
+        
+
+    Returns
+    -------
+    TotalId :  str
+        DESCRIPTION.
+
+    '''
+    TotalId = TDL_item.TDLid +"-"+ "TSK-00000000"  # No task id, so we use a placeholder.
+    return TotalId
+   
     
 
 def Get_User():
@@ -245,3 +253,11 @@ def Get_User():
         return user
     except Exception:
         return "Unknown"
+
+'''     
+    چون جزئیات زیاد داره فعلا اینو بیخیال میشیم
+    def add_subtask(self):
+        n = input("how many subTask you want to add : ")
+        for i in n :
+            self.subtask.append(input(f"please inter the {i}-th subTask :  "))
+'''  
