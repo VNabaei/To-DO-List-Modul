@@ -6,28 +6,6 @@ import csv
 
 
 
-# Creating folders for TDL files 
-TDL_Folder = "TodoLists app"
-if not os.path.exists(TDL_Folder):
-    os.makedirs(TDL_Folder)
-    file_path = os.path.join(TDL_Folder,f"Table_list.csv") #ساخت مسیر فایل داده
-    fieds_of_table_list = ['id','name','creator','time','status_file']
-    
-    data = [
-        {
-            'id':datetime.today().__str__
-            ,'name' : 
-        }
-    ]
-    
-    with open('Table_list.csv', 'w', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=fieds_of_table_list)
-        writer.writeheader()  
-        writer.writerows()
-    TDLfile.close()
-    
-
-
 # TDL file creator : 
 def Create_New_list(name :str):
     '''
@@ -44,12 +22,11 @@ def Create_New_list(name :str):
     
     '''
     
+    # Creating folders for TDL files 
     TDL_Folder = "TodoLists app"
     if not os.path.exists(TDL_Folder):
         os.makedirs(TDL_Folder)
         file_path = os.path.join(TDL_Folder,f"Table_list.csv") #ساخت مسیر فایل داده
-        
-        
         #ساخت جدول حاوی اطلاعات لیست ها
         fieds_of_table_list = ['id','name','creator','time','status_file']
     
@@ -68,11 +45,6 @@ def Create_New_list(name :str):
             writer.writeheader()  
             writer.writerows(data)
         
-
-    
-    
-    
-    
     
     file_path = os.path.join(TDL_Folder,f"{name}.csv") #ساخت مسیر فایل داده
     
