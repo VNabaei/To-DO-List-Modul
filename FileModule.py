@@ -26,21 +26,21 @@ def Create_New_list(name :str):
     TDL_Folder = "TodoLists app"
     if not os.path.exists(TDL_Folder):
         os.makedirs(TDL_Folder)
-        file_path = os.path.join(TDL_Folder,f"Table_list.csv") #ساخت مسیر فایل داده
+        fileTL_path = os.path.join(TDL_Folder,"Table_list.csv") #ساخت مسیر فایل داده
         #ساخت جدول حاوی اطلاعات لیست ها
         fieds_of_table_list = ['id','name','creator','time','status_file']
     
         data = [
             {
-                'id':datetime.today().__str__
+                'id':datetime.today().__str__()
                 ,'name' : name
                 ,'creator' : Get_User()
-                ,'time' : datetime.today().date().__str__
+                ,'time' : datetime.today().date().__str__()
                 ,'status_file' : 'created'
             }
          ]
     
-        with open('Table_list.csv', 'w', newline='', encoding='utf-8') as file:
+        with open(fileTL_path, 'w', newline='', encoding='utf-8') as file:
             writer = csv.DictWriter(file, fieldnames=fieds_of_table_list)
             writer.writeheader()  
             writer.writerows(data)
@@ -66,7 +66,7 @@ def Create_New_list(name :str):
     # ---- If desired, the file will be completed.   
     # ---- the filed of colums table :
     field_Of_TDL = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
-      
+    
     input("Do you want add tasks to this list (y/n)? : ")
     if input().upper() == 'Y':
         Add_Task(file_path,field_Of_TDL,name)
@@ -74,12 +74,8 @@ def Create_New_list(name :str):
         print("No tasks added to the list.")
         NulTDL_creator(field_Of_TDL,name)
         
-        
-
-    
       
     # ---- File creation operation completed.
-    ID_list = '0000'
     print(f"List {name} created successfully at {file_path}")
     return file_path , name
         
@@ -123,8 +119,8 @@ def Add_Task (FileTDS ,field_Of_TDL, name):
                 ,"file_status": 'created'        
              }
         
-
         tasks.append(task)
+    #ذخیره سازی در فایل    
     with open(f'{name}.csv', 'w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=field_Of_TDL)
         writer.writeheader()  
