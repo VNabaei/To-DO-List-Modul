@@ -10,6 +10,22 @@ import csv
 TDL_Folder = "TodoLists app"
 if not os.path.exists(TDL_Folder):
     os.makedirs(TDL_Folder)
+    file_path = os.path.join(TDL_Folder,f"Table_list.csv") #ساخت مسیر فایل داده
+    fieds_of_table_list = ['id','name','creator','time','status_file']
+    
+    data = [
+        {
+            'id':datetime.today().__str__
+            ,'name' : 
+        }
+    ]
+    
+    with open('Table_list.csv', 'w', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=fieds_of_table_list)
+        writer.writeheader()  
+        writer.writerows()
+    TDLfile.close()
+    
 
 
 # TDL file creator : 
@@ -27,6 +43,36 @@ def Create_New_list(name :str):
     the path of File created
     
     '''
+    
+    TDL_Folder = "TodoLists app"
+    if not os.path.exists(TDL_Folder):
+        os.makedirs(TDL_Folder)
+        file_path = os.path.join(TDL_Folder,f"Table_list.csv") #ساخت مسیر فایل داده
+        
+        
+        #ساخت جدول حاوی اطلاعات لیست ها
+        fieds_of_table_list = ['id','name','creator','time','status_file']
+    
+        data = [
+            {
+                'id':datetime.today().__str__
+                ,'name' : name
+                ,'creator' : Get_User()
+                ,'time' : datetime.today().date().__str__
+                ,'status_file' : 'created'
+            }
+         ]
+    
+        with open('Table_list.csv', 'w', newline='', encoding='utf-8') as file:
+            writer = csv.DictWriter(file, fieldnames=fieds_of_table_list)
+            writer.writeheader()  
+            writer.writerows(data)
+        
+
+    
+    
+    
+    
     
     file_path = os.path.join(TDL_Folder,f"{name}.csv") #ساخت مسیر فایل داده
     
@@ -47,32 +93,39 @@ def Create_New_list(name :str):
       
     # ---- If desired, the file will be completed.   
     # ---- the filed of colums table :
-    field_Of_TDL = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY"] 
+    field_Of_TDL = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
       
     input("Do you want add tasks to this list (y/n)? : ")
     if input().upper() == 'Y':
-        Add_Task(file_path,field_Of_TDL)
+        Add_Task(file_path,field_Of_TDL,name)
     else:
         print("No tasks added to the list.")
-        def NulTDL_creator(file_path,field_Of_TDL):
+        NulTDL_creator(field_Of_TDL,name)
         
         
 
     
       
-    # ---- File creation operation completed.    
+    # ---- File creation operation completed.
+    ID_list = '0000'
     print(f"List {name} created successfully at {file_path}")
-    return file_path
+    return file_path , name
         
 # Tasks Creator      
-def Add_Task (FileTDS):
+def Add_Task (FileTDS ,field_Of_TDL, name):
     '''
     This function, in the todolist file,creates a task and fills in the rows that are the tasks .
     
     Parameters
     ---------- 
-    name : path
+    FileTDS : path
     The path of todolist 
+    
+    field_Of_TDL : array
+    the array of table fileds
+    
+    name : str
+    the name of file e.g. : "first_file.csv"
     
     Returns
     -------
@@ -83,41 +136,38 @@ def Add_Task (FileTDS):
     tasks = []
     while True :
         task_name =input("input the task, for break,input nothing!")
-        if task == "":
+        if task_name == "":
             break
         else :
-            task_input = {
+            task= {
                 "ID" : ID_Generator(FileTDS) 
                 ,"Title": task_name
                 ,"Descreaption" : input("add info")
                 ,"DeadLine" : Deadline_Creator()
                 ,"Status" : "Status"
                 ,"Creat_at" :datetime.today().date()
-                ,"Edited_by" : Editor()
-                ,"Create_bY" : Get_User()             
+                ,"Edited_by" : Editor() 
+                ,"Create_bY" : Get_User()     
+                ,"file_status": 'created'        
              }
         
 
         tasks.append(task)
+    with open(f'{name}.csv', 'w', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=field_Of_TDL)
+        writer.writeheader()  
+        writer.writerows(tasks)
         
-    # with open(FileTDS,"w") as f :
-    #     f.write(f"Title : {DDLine}\n") # از نوع لیست کلاس بساز
-    #     f.write(f"DeadLine : {DDLine}\n")
-    #     f.write(f"DeadLine : {DDLine}\n")
-    #     f.write(f"DeadLine : {DDLine}\n")
-    #     f.write(f"DeadLine : {DDLine}\n")
         
-    #     f.write(f"DeadLine : {DDLine}\n")
-    #     f.write(f"ceator : {Get_User}\n")
-    #     f.write("Task :\n")
-    #     for t in tasks :
-    #         f.write(f" {t} \n")
     print (f"task(s) saved in {FileTDS} successfully")
  
  
 # if no task to input :
-def NulTDL_creator(file_path,field_Of_TDL):
-    pass 
+def NulTDL_creator(field_Of_TDL,name):
+    with open(f'{name}.csv', 'w', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=field_Of_TDL)
+        writer.writeheader()  
+         
 
     
 def Show_List(FileTDS):
@@ -167,6 +217,20 @@ def Get_User():
     except Exception:
         return "Unknown"
 
+def Editor():
+    '''
+    this function get user when the edit function called
+    
+    Parametrs:
+    ---------
+    null
+    
+    Returns:
+    -------
+    the user that editied the TDL/TSK
+    '''
+    return Get_User()
+
 def Deadline_Creator():
     while True:
         ddline_input = input("inter the DDline (Year/month/day) e.g. : 2025/07/31  : ") # در اینجا یه برسی مقدار داده شده هم اجرا شود.
@@ -190,7 +254,12 @@ def Deadline_Creator():
             return ddline_date
             break #exit the loop if no date is provided
       
-def ID_Generator(FileTDS) :
+def ID_Generator(FileTDS,TDL_ID) :
+    '''
+    This function get the last id and creat the next id 
+    '''
     with open(FileTDS , 'r') as f :
-        f.r
+        id = '' # از فایل fileTDL در آخرین سطر، ستون Id  رو میخونیم و میریزیم توی اینجا
+    x = int(id[67:])
+    return f'TDL - {TDL_ID} - TSK - {datetime.today().__str__()}'+ '{++x}'
        
