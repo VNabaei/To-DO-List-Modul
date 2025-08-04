@@ -32,10 +32,10 @@ def Create_New_list(name :str):
     
         data = [
             {
-                'id':datetime.today().__str__()
+                'id':datetime.today().strftime("%Y%m%d%H%M%S")
                 ,'name' : name
                 ,'creator' : Get_User()
-                ,'time' : datetime.today().date().__str__()
+                ,'time' : datetime.today().strftime("%Y%m%d%H%M%S")
                 ,'status_file' : 'created'
             }
          ]
@@ -67,12 +67,12 @@ def Create_New_list(name :str):
     # ---- the filed of colums table :
     field_Of_TDL = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
     
-    input("Do you want add tasks to this list (y/n)? : ")
-    if input().upper() == 'Y':
+    ans =input("Do you want add tasks to this list (y/n)? : ")
+    if ans.upper() == 'Y':
         Add_Task(file_path,field_Of_TDL,name)
     else:
         print("No tasks added to the list.")
-        NulTDL_creator(field_Of_TDL,name)
+        NulTDL_creator(field_Of_TDL,file_path)
         
       
     # ---- File creation operation completed.
@@ -121,7 +121,7 @@ def Add_Task (FileTDS ,field_Of_TDL, name):
         
         tasks.append(task)
     #ذخیره سازی در فایل    
-    with open(f'{name}.csv', 'w', newline='', encoding='utf-8') as file:
+    with open(FileTDS, 'w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=field_Of_TDL)
         writer.writeheader()  
         writer.writerows(tasks)
@@ -131,8 +131,8 @@ def Add_Task (FileTDS ,field_Of_TDL, name):
  
  
 # if no task to input :
-def NulTDL_creator(field_Of_TDL,name):
-    with open(f'{name}.csv', 'w', newline='', encoding='utf-8') as file:
+def NulTDL_creator(field_Of_TDL,FileTDS):
+    with open(FileTDS, 'w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=field_Of_TDL)
         writer.writeheader()  
          
@@ -155,25 +155,21 @@ def delete_List(file_path) :
         print(f"{file_path} does not exist.")    
     
 
-def delete_Task(Task):
-    # Implement the logic to delete a specific task from the list
-    with open(Task, "r") as f:
-        line = f.readline()   
-        if Task == line.split()  :  
-            pass
-            
-    # with open(Task, "w") as f:
-    #     for line in lines:
-    #         if line.strip() != Task:    
-    #             f.write(line)           
+def delete_Task(file_path,Task):
+    #بنا بر عنوان، سطر تسک را پیدا کرده و  مقدار ستون وضعیت را به "deleted" تغییر می دهد
+    pass       
+                  
 def Update_List():
+    #فکر کنم این الان نیاز نباشه
     pass
 
 
 def Edit_List ():
+    #این هم الان اولویت نبست
     pass
 
 def Edit_Task():
+    # تسک مدنظر را پیدا کرده و شاخصه های قابل تغییر را تغییر می دهد
     pass
 
 
@@ -226,8 +222,29 @@ def ID_Generator(FileTDS,TDL_ID) :
     '''
     This function get the last id and creat the next id 
     '''
-    with open(FileTDS , 'r') as f :
-        id = '' # از فایل fileTDL در آخرین سطر، ستون Id  رو میخونیم و میریزیم توی اینجا
-    x = int(id[67:])
-    return f'TDL - {TDL_ID} - TSK - {datetime.today().__str__()}'+ '{++x}'
+    with open(FileTDS, 'r', encoding='utf-8') as f:
+        rows = list(csv.DictReader(f))
+
+        if rows:
+            last_row = rows[-1]
+            id = last_row["ID"]
+     
+            # از فایل fileTDL در آخرین سطر، ستون Id  رو میخونیم و میریزیم توی اینجا
+            x = int(id[43:]) # البته فقط برای این فرمت آی دی کار میکنه
+            x += 1
+            
+            #-----------------
+            # برای جدا کردن بخش شمارنده راه دیگه ای هم هست ولی فعلا استفاده نمیکنم 
+            # match = re.search(r'(\d+)$', id)  # آخرین عدد رو می‌گیره
+            # if match:
+            #     x = int(match.group(1)) + 1
+            # else:
+            #     x = 1
+            
+            
+            
+        else :
+            x = 0
+    return f'TDL - {TDL_ID} - TSK - {datetime.today().strftime("%Y%m%d%H%M%S")}'+ f'{x:03d}'# ID format : TDL - {TDL_ID} - TSK - {YYYYMMDDHHMMSS} + {counter of tasks in this TDL file}
+    # آی دی خیلی طولانی شد عذرخواهم
        
