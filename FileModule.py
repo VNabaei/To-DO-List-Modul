@@ -4,8 +4,14 @@ import getpass
 import csv
 # import  Lists_Task  // با جدول کار می کنم نظرم عوض شد
 
+#the variables in FileModule.py
+# -------------------------------------------------------------
+file_status = ['created', 'edited', 'deleted'] # وضعیت فایل ها در دیتابیس
+Status = ['Done', 'Todo', 'In Progress'] # وضعیت تسک ها در دیتابیس
 
 
+#the functions in FileModule.py
+# -------------------------------------------------------------
 # TDL file creator : 
 def Create_New_list(name :str):
     '''
@@ -44,10 +50,8 @@ def Create_New_list(name :str):
             writer = csv.DictWriter(file, fieldnames=fieds_of_table_list)
             writer.writeheader()  
             writer.writerows(data)
-        
     
     file_path = os.path.join(TDL_Folder,f"{name}.csv") #ساخت مسیر فایل داده
-    
     
     #برسی وجود داشتن از قبل یا نه
     if os.path.exists(file_path):
@@ -57,7 +61,7 @@ def Create_New_list(name :str):
             return
         else : #اگر بخواهد جایگذین شود مسیر فایل قبلی حذف و مسیر جدید ساخته می شود
             delete_List(file_path)
-            Create_New_list(name)
+            Create_New_list(name) 
     else :#درصورتی که فایل وجود نداشت
         # TDList_File_Class = Lists_Task.To_Do_List(name) Creat the TDLclass 
         TDLfile = open(file_path,"w",encoding= 'utf-8')
@@ -67,6 +71,7 @@ def Create_New_list(name :str):
     # ---- the filed of colums table :
     field_Of_TDL = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
     
+    #Add the tasks :
     ans =input("Do you want add tasks to this list (y/n)? : ")
     if ans.upper() == 'Y':
         Add_Task(file_path,field_Of_TDL,name)
@@ -112,11 +117,11 @@ def Add_Task (FileTDS ,field_Of_TDL, name):
                 ,"Title": task_name
                 ,"Descreaption" : input("add info")
                 ,"DeadLine" : Deadline_Creator()
-                ,"Status" : "Status"
+                ,"Status" : Status[1]  # 'Todo' as default
                 ,"Creat_at" :datetime.today().date()
                 ,"Edited_by" : Editor() 
                 ,"Create_bY" : Get_User()     
-                ,"file_status": 'created'        
+                ,"file_status": file_status[0]  # 'created'        
              }
         
         tasks.append(task)
@@ -138,14 +143,31 @@ def NulTDL_creator(field_Of_TDL,FileTDS):
          
 
     
-def Show_List(FileTDS):
+def Show_List_ALLTask(FileTDS):
     if not os.path.exists(FileTDS):
         print(f"{FileTDS} does not exist.")
         return
     with open(FileTDS, "r") as f:
         content = f.read()
         print(content)  
+        
+def Show_List(FileTDS):
+    if not os.path.exists(FileTDS):
+        print(f"{FileTDS} does not exist.")
+        return
 
+    with open(FileTDS, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        tasks = [row for row in reader if row.get("Statusfile", "").lower() != "delete"]
+
+    if not tasks:
+        print("هیچ تسک فعالی وجود ندارد.")
+        return
+
+    print("لیست تسک‌های فعال:")
+    for task in tasks:
+        pass
+        print(f"Title: {task.get('title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
 
 def delete_List(file_path) :
     if os.path.exists(file_path):
@@ -241,10 +263,9 @@ def ID_Generator(FileTDS,TDL_ID) :
             # else:
             #     x = 1
             
-            
-            
         else :
             x = 0
-    return f'TDL - {TDL_ID} - TSK - {datetime.today().strftime("%Y%m%d%H%M%S")}'+ f'{x:03d}'# ID format : TDL - {TDL_ID} - TSK - {YYYYMMDDHHMMSS} + {counter of tasks in this TDL file}
+    return f'TDL - {TDL_ID} - TSK - {datetime.today().strftime("%Y%m%d%H%M%S")}'+ f'{x:03d}'
+    # ID format : TDL - {TDL_ID} - TSK - {YYYYMMDDHHMMSS} + {counter of tasks in this TDL file}
     # آی دی خیلی طولانی شد عذرخواهم
        
