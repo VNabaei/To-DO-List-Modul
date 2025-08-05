@@ -177,10 +177,47 @@ def delete_List(file_path) :
         print(f"{file_path} does not exist.")    
     
 
-def delete_Task(file_path,Task):
-    #بنا بر عنوان، سطر تسک را پیدا کرده و  مقدار ستون وضعیت را به "deleted" تغییر می دهد
-    pass       
-                  
+def delete_Task(file_path,Task,file_status):
+    '''
+    This function changes the file status in the given task to "deleted".
+    
+    Parametrs :
+    ---------
+    file_path : path
+    the addres of TDL file
+    
+    Task : str
+    The task we want to delete
+    
+    file_status : list
+    List containing the file status in the database
+    
+    Returns :
+    -------
+    None
+    '''
+    if not os.path.exists(file_path):
+        print(f"{file_path} does not exist.")
+        return
+        
+    else:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            tasks = list(csv.DictReader(file))
+            field_names = tasks[0].keys() if tasks else["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status']    # Get field names from the first table
+
+        task_found = False
+        for task in tasks:
+            if task['Title'].strip().lower() == Task.strip().lower():
+                task['file_status'] = file_status[2]
+                task_found = True
+        if not task_found :
+            print(f"{task} not found")
+            return
+        with open(file_path, 'w' , encoding= 'utf-8', newline= '') as f :
+            w = csv.DictWriter(f,fieldnames= field_names)
+            w.writeheader()
+            w.writerows(tasks)
+            
 def Update_List():
     #فکر کنم این الان نیاز نباشه
     pass
