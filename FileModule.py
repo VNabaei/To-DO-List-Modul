@@ -141,8 +141,19 @@ def NulTDL_creator(field_Of_TDL,FileTDS):
         writer = csv.DictWriter(file, fieldnames=field_Of_TDL)
         writer.writeheader()  
          
+#the operation Function :
+#----------------------------------------------
+# ---- for task 
+def Show_the_task(file_path,Task):
+    if not os.path.exists(file_path):
+        return
+    with open(file_path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        tasks = [row for row in reader if (row.get("Statusfile", "").lower() != "delete" and row.get("title", "").lower() == Task['title'])]
+        for task in tasks:
+            print(f"Title: {task.get('title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
 
-    
+  
 def Show_List_ALLTask(FileTDS):
     if not os.path.exists(FileTDS):
         print(f"{FileTDS} does not exist.")
@@ -150,33 +161,7 @@ def Show_List_ALLTask(FileTDS):
     with open(FileTDS, "r") as f:
         content = f.read()
         print(content)  
-        
-def Show_List(FileTDS):
-    if not os.path.exists(FileTDS):
-        print(f"{FileTDS} does not exist.")
-        return
-
-    with open(FileTDS, "r", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        tasks = [row for row in reader if row.get("Statusfile", "").lower() != "delete"]
-
-    if not tasks:
-        print("هیچ تسک فعالی وجود ندارد.")
-        return
-
-    print("لیست تسک‌های فعال:")
-    for task in tasks:
-        pass
-        print(f"Title: {task.get('title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
-
-def delete_List(file_path) :
-    if os.path.exists(file_path):
-        os.remove(file_path)
-        print(f"{file_path} has been deleted successfully.")
-    else:
-        print(f"{file_path} does not exist.")    
-    
-
+ 
 def delete_Task(file_path,Task,file_status):
     '''
     This function changes the file status in the given task to "deleted".
@@ -217,21 +202,73 @@ def delete_Task(file_path,Task,file_status):
             w = csv.DictWriter(f,fieldnames= field_names)
             w.writeheader()
             w.writerows(tasks)
+
+def Edit_Task(file_path,Task,file_status):
+    # تسک مدنظر را پیدا کرده و شاخصه های قابل تغییر را تغییر می دهد
+    #و فایل را بازنویسی میکند.
+    if not os.path.exists(file_path):
+        print(f"{file_path} does not exist.")
+        return
+        
+    else:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            tasks = list(csv.DictReader(file))
+            field_names = tasks[0].keys() if tasks else["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status']    # Get field names from the first table
+
+        task_found = False
+        for task in tasks:
+            if task['Title'].strip().lower() == Task.strip().lower():
+                Show_the_task(file_path,Task)
+                quest = input('what thw filed do you want chang')
+                task['Title'] = input()
+                task['file_status'] = file_status[2]
+                task_found = True
+        if not task_found :
+            print(f"{task} not found")
+            return
+        with open(file_path, 'w' , encoding= 'utf-8', newline= '') as f :
+            w = csv.DictWriter(f,fieldnames= field_names)
+            w.writeheader()
+            w.writerows(tasks)
+    pass
+
+      
+   
+# ---- for list
             
 def Update_List():
     #فکر کنم این الان نیاز نباشه
     pass
 
-
 def Edit_List ():
     #این هم الان اولویت نبست
     pass
 
-def Edit_Task():
-    # تسک مدنظر را پیدا کرده و شاخصه های قابل تغییر را تغییر می دهد
-    pass
+def Show_List(FileTDS):
+    if not os.path.exists(FileTDS):
+        print(f"{FileTDS} does not exist.")
+        return
 
+    with open(FileTDS, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        tasks = [row for row in reader if row.get("Statusfile", "").lower() != "delete"]
 
+    if not tasks:
+        print("هیچ تسک فعالی وجود ندارد.")
+        return
+
+    print("لیست تسک‌های فعال:")
+    for task in tasks:
+        print(f"Title: {task.get('title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
+
+def delete_List(file_path) :
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        print(f"{file_path} has been deleted successfully.")
+    else:
+        print(f"{file_path} does not exist.")    
+ 
+# general function:
 # ---------------------------------------------------------------------
 def Get_User():
     try:
