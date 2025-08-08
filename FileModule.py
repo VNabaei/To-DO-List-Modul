@@ -41,7 +41,8 @@ def Create_New_list(name :str):
                 'id':datetime.today().strftime("%Y%m%d%H%M%S")
                 ,'name' : name
                 ,'creator' : Get_User()
-                ,'time' : datetime.today().strftime("%Y%m%d%H%M%S")
+                ,'time' : datetime.today()
+                # .strftime("%Y%m%d%H%M%S") به صورت شی زمان ذخیره بشه بهتره شاید
                 ,'status_file' : 'created'
             }
          ]
@@ -184,7 +185,6 @@ def delete_Task(file_path,Task,file_status):
     if not os.path.exists(file_path):
         print(f"{file_path} does not exist.")
         return
-        
     else:
         with open(file_path, 'r', encoding='utf-8') as file:
             tasks = list(csv.DictReader(file))
@@ -219,8 +219,18 @@ def Edit_Task(file_path,Task,file_status):
         for task in tasks:
             if task['Title'].strip().lower() == Task.strip().lower():
                 Show_the_task(file_path,Task)
-                quest = input('what thw filed do you want chang')
-                task['Title'] = input()
+                quest = input('what the filed do you want chang? (1.Title 2.Descreaption 3.DeadLine 4.Status) ')
+                match (quest):
+                    case 1:
+                        task['Title'] = input('enter the title')
+                    case 2:
+                        task['Descreaption'] = input('enter the info')
+                    case 3:
+                        task['DeadLine'] = Deadline_Creator()
+                    case 4: 
+                        i= input('enter the status (1.Done, 2.Todo, 3.In Progress)')
+                        task['Status'] = Status[i-1]
+                        
                 task['file_status'] = file_status[2]
                 task_found = True
         if not task_found :
