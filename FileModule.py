@@ -13,14 +13,14 @@ Status = ['Done', 'Todo', 'In Progress'] # وضعیت تسک ها در دیتا�
 #the functions in FileModule.py
 # -------------------------------------------------------------
 # TDL file creator : 
-def Create_New_list(name :str):
+def Create_New_list(input_name :str):
     '''
     This function creates a file in csv format so that it can be loaded into the database.
     
     Parameters
     ---------- 
-    name : str
-    The name given to the toDOLIST
+    input_name : str
+    The input_name given to the toDOLIST
     
     Returns
     -------
@@ -29,30 +29,33 @@ def Create_New_list(name :str):
     '''
     
     # Creating folders for TDL files 
-    TDL_Folder = "TodoLists app"
-    if not os.path.exists(TDL_Folder):
-        os.makedirs(TDL_Folder)
-        fileTL_path = os.path.join(TDL_Folder,"Table_list.csv") #ساخت مسیر فایل داده
+    current_dir = os.getcwd()
+    ToDoList_File_name = "TodoLists app"
+    ToDoList_Folder = os.path.join(current_dir,ToDoList_File_name)
+    if not os.path.exists(ToDoList_Folder):
+        os.makedirs(ToDoList_Folder)
+        fileTableList_path = os.path.join(ToDoList_Folder,"Table_list.csv") #ساخت مسیر فایل داده
         #ساخت جدول حاوی اطلاعات لیست ها
-        fieds_of_table_list = ['id','name','creator','time','status_file']
+        fieds_of_table_list = ['id','input_name','creator','time','status_file']
     
         data = [
             {
                 'id':datetime.today().strftime("%Y%m%d%H%M%S")
-                ,'name' : name
+                ,'name' : input_name
                 ,'creator' : Get_User()
                 ,'time' : datetime.today()
                 # .strftime("%Y%m%d%H%M%S") به صورت شی زمان ذخیره بشه بهتره شاید
                 ,'status_file' : 'created'
+                ,'path' : os.path.join(ToDoList_Folder,f"{input_name}.csv") #برای برسی شناسه to do list  به این نیاز داریم
             }
          ]
     
-        with open(fileTL_path, 'w', newline='', encoding='utf-8') as file:
-            writer = csv.DictWriter(file, fieldnames=fieds_of_table_list)
+        with open(fileTableList_path, 'w', newline='', encoding='utf-8') as file:
+            writer = csv.DictWriter(file, field_names=fieds_of_table_list)
             writer.writeheader()  
             writer.writerows(data)
     
-    file_path = os.path.join(TDL_Folder,f"{name}.csv") #ساخت مسیر فایل داده
+    file_path = os.path.join(ToDoList_Folder,f"{input_name}.csv") #ساخت مسیر فایل داده
     
     #برسی وجود داشتن از قبل یا نه
     if os.path.exists(file_path):
@@ -62,60 +65,75 @@ def Create_New_list(name :str):
             return
         else : #اگر بخواهد جایگذین شود مسیر فایل قبلی حذف و مسیر جدید ساخته می شود
             delete_List(file_path)
-            Create_New_list(name) 
-    else :#درصورتی که فایل وجود نداشت
-        # TDList_File_Class = Lists_Task.To_Do_List(name) Creat the TDLclass 
-        TDLfile = open(file_path,"w",encoding= 'utf-8')
-        TDLfile.close()
-      
+            Create_New_list(input_name) 
+            
+            
+    # -------------------------------------------------------------------------------------------------------------------------------------
+    
+    # what is this bug ?
+          
+    # else :#درصورتی که فایل وجود نداشت
+    #     # TDList_File_Class = Lists_Task.To_Do_List(input_name) Creat the TDLclass 
+    #     ToDoListfile = open(file_path,"w",encoding= 'utf-8')
+    #     ToDoListfile.close()
+    
+    # -------------------------------------------------------------------------------------------------------------------------------------
+    
+     
     # ---- If desired, the file will be completed.   
     # ---- the filed of colums table :
-    field_Of_TDL = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
+    field_Of_ToDoList = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
     
     #Add the tasks :
     ans =input("Do you want add tasks to this list (y/n)? : ")
     if ans.upper() == 'Y':
-        Add_Task(file_path,field_Of_TDL,name)
+        tableListPath = os.path.join(ToDoList_Folder,"Table_list.csv")
+        with open(tableListPath,'w',encoding='utf-8') as f :
+            reader = list(csv.DictReader(f))
+            ToDoList = [row for row in reader if row.get("name","") == input_name ]
+            ToDoList_id = ToDoList["id"]
+       
+        Add_Task(file_path,field_Of_ToDoList,input_name,ToDoList_id)
     else:
         print("No tasks added to the list.")
-        NulTDL_creator(field_Of_TDL,file_path)
+        Null_ToDoList_creator(field_Of_ToDoList,file_path)
         
       
     # ---- File creation operation completed.
-    print(f"List {name} created successfully at {file_path}")
-    return file_path , name
+    print(f"List {input_name} created successfully at {file_path}")
+    return file_path , input_name
         
 # Tasks Creator      
-def Add_Task (FileTDS ,field_Of_TDL, name):
+def Add_Task (ToDoList_Path ,field_Of_ToDoList, input_name,ToDoList_Id):
     '''
     This function, in the todolist file,creates a task and fills in the rows that are the tasks .
     
     Parameters
     ---------- 
-    FileTDS : path
+    ToDoList_Path : path
     The path of todolist 
     
-    field_Of_TDL : array
+    field_Of_ToDoList : array
     the array of table fileds
     
-    name : str
-    the name of file e.g. : "first_file.csv"
+    input_name : str
+    the input_name of file e.g. : "first_file.csv"
     
     Returns
     -------
     the path of File created
     
     '''
-    
+     
     tasks = []
     while True :
-        task_name =input("input the task, for break,input nothing!")
-        if task_name == "":
+        task_input_name =input("input the task, for break,input nothing!")
+        if task_input_name == "":
             break
         else :
             task= {
-                "ID" : ID_Generator(FileTDS) 
-                ,"Title": task_name
+                "ID" : ID_Generator(ToDoList_Path,ToDoList_Id) 
+                ,"Title": task_input_name
                 ,"Descreaption" : input("add info")
                 ,"DeadLine" : Deadline_Creator()
                 ,"Status" : Status[1]  # 'Todo' as default
@@ -127,19 +145,19 @@ def Add_Task (FileTDS ,field_Of_TDL, name):
         
         tasks.append(task)
     #ذخیره سازی در فایل    
-    with open(FileTDS, 'w', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=field_Of_TDL)
+    with open(ToDoList_Path, 'w', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, field_names=field_Of_ToDoList)
         writer.writeheader()  
         writer.writerows(tasks)
         
         
-    print (f"task(s) saved in {FileTDS} successfully")
+    print (f"task(s) saved in {ToDoList_Path} successfully")
  
  
 # if no task to input :
-def NulTDL_creator(field_Of_TDL,FileTDS):
-    with open(FileTDS, 'w', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=field_Of_TDL)
+def Null_ToDoList_creator(field_Of_ToDoList,ToDoList_Path):
+    with open(ToDoList_Path, 'w', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, field_names=field_Of_ToDoList)
         writer.writeheader()  
          
 #the operation Function :
@@ -155,11 +173,11 @@ def Show_the_task(file_path,Task):
             print(f"Title: {task.get('title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
 
   
-def Show_List_ALLTask(FileTDS):
-    if not os.path.exists(FileTDS):
-        print(f"{FileTDS} does not exist.")
+def Show_List_ALLTask(ToDoList_Path):
+    if not os.path.exists(ToDoList_Path):
+        print(f"{ToDoList_Path} does not exist.")
         return
-    with open(FileTDS, "r") as f:
+    with open(ToDoList_Path, "r") as f:
         content = f.read()
         print(content)  
  
@@ -188,7 +206,7 @@ def delete_Task(file_path,Task,file_status):
     else:
         with open(file_path, 'r', encoding='utf-8') as file:
             tasks = list(csv.DictReader(file))
-            field_names = tasks[0].keys() if tasks else["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status']    # Get field names from the first table
+            field_input_names = tasks[0].keys() if tasks else["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status']    # Get field input_names from the first table
 
         task_found = False
         for task in tasks:
@@ -199,7 +217,7 @@ def delete_Task(file_path,Task,file_status):
             print(f"{task} not found")
             return
         with open(file_path, 'w' , encoding= 'utf-8', newline= '') as f :
-            w = csv.DictWriter(f,fieldnames= field_names)
+            w = csv.DictWriter(f,field_names= field_input_names)
             w.writeheader()
             w.writerows(tasks)
 
@@ -213,7 +231,7 @@ def Edit_Task(file_path,Task,file_status):
     else:
         with open(file_path, 'r', encoding='utf-8') as file:
             tasks = list(csv.DictReader(file))
-            field_names = tasks[0].keys() if tasks else["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status']    # Get field names from the first table
+            field_input_names = tasks[0].keys() if tasks else["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status']    # Get field input_names from the first table
 
         task_found = False
         for task in tasks:
@@ -237,7 +255,7 @@ def Edit_Task(file_path,Task,file_status):
             print(f"{task} not found")
             return
         with open(file_path, 'w' , encoding= 'utf-8', newline= '') as f :
-            w = csv.DictWriter(f,fieldnames= field_names)
+            w = csv.DictWriter(f,field_names= field_input_names)
             w.writeheader()
             w.writerows(tasks)
     pass
@@ -254,12 +272,12 @@ def Edit_List ():
     #این هم الان اولویت نبست
     pass
 
-def Show_List(FileTDS):
-    if not os.path.exists(FileTDS):
-        print(f"{FileTDS} does not exist.")
+def Show_List(ToDoList_Path):
+    if not os.path.exists(ToDoList_Path):
+        print(f"{ToDoList_Path} does not exist.")
         return
 
-    with open(FileTDS, "r", encoding="utf-8") as f:
+    with open(ToDoList_Path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         tasks = [row for row in reader if row.get("Statusfile", "").lower() != "delete"]
 
@@ -324,11 +342,11 @@ def Deadline_Creator():
             return ddline_date
             break #exit the loop if no date is provided
       
-def ID_Generator(FileTDS,TDL_ID) :
+def ID_Generator(ToDoList_Path,TDL_ID) :
     '''
     This function get the last id and creat the next id 
     '''
-    with open(FileTDS, 'r', encoding='utf-8') as f:
+    with open(ToDoList_Path, 'r', encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
 
         if rows:
