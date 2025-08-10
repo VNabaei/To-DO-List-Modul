@@ -14,12 +14,12 @@ def main():
         #---- create a new list
         To_Do_List = Lists_Task.To_Do_List(List_Title)
         #---- add the list to the file
-        FileModule.Create_New_list(To_Do_List)
+        (path,filename) = FileModule.Create_New_list(To_Do_List)
         #---- for add tasks this is run in the function Create_New_list
         #---- if the user want to add tasks, this function will be called
         
 
-        pass
+        
     elif choiceL1 == "2":
         print("1. Add a new task\n2.Edit a task \n3.Delete a task \n4.View all tasks \n5.Delete List \n6.Update the List \n7.back to main menu \n8.Exit")
         choiceL2 = input("Enter your choise : ")
