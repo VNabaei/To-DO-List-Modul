@@ -29,7 +29,7 @@ def Add_List_in_Table_list(ToDoList_Folder,input_name):
             }
         ]
         reader.extend(data)
-    with open (fileTableList_path,"w",encoding='utf-8') as f:
+    with open (fileTableList_path,"w",newline='',encoding='utf-8') as f:
         writer = csv.DictWriter(f,fieldnames=field_names)
         writer.writeheader()
         writer.writerows(reader)
@@ -108,7 +108,9 @@ def Create_New_list(input_name :str):
         #     writer.writerows(data)
     else :
         Add_List_in_Table_list(ToDoList_Folder,input_name)
+        
     file_path = os.path.join(ToDoList_Folder,f"{input_name}.csv") #ساخت مسیر فایل داده
+    field_Of_ToDoList = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
     
     #برسی وجود داشتن از قبل یا نه
     if os.path.exists(file_path):
@@ -119,23 +121,23 @@ def Create_New_list(input_name :str):
         else : #اگر بخواهد جایگذین شود مسیر فایل قبلی حذف و مسیر جدید ساخته می شود
             delete_List(file_path)
             Create_New_list(input_name) 
-            
-            
+    else :#درصورتی که فایل وجود نداشت
+        # TDList_File_Class = Lists_Task.To_Do_List(input_name) Creat the TDLclass 
+        with open(file_path,"w",newline='',encoding= 'utf-8') as f :
+            writer = csv.DictWriter(f,field_Of_ToDoList)
+            writer.writeheader() 
+        
     # -------------------------------------------------------------------------------------------------------------------------------------
     
     # what is this bug ?
           
-    # else :#درصورتی که فایل وجود نداشت
-    #     # TDList_File_Class = Lists_Task.To_Do_List(input_name) Creat the TDLclass 
-    #     ToDoListfile = open(file_path,"w",encoding= 'utf-8')
-    #     ToDoListfile.close()
-    
+
     # -------------------------------------------------------------------------------------------------------------------------------------
     
      
     # ---- If desired, the file will be completed.   
     # ---- the filed of colums table :
-    field_Of_ToDoList = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
+
     
     #Add the tasks :
     ans =input("Do you want add tasks to this list (y/n)? : ")
@@ -283,7 +285,7 @@ def Edit_Task(file_path,Task,file_status):
         return
         
     else:
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(file_path, 'r',newline='', encoding='utf-8') as file:
             tasks = list(csv.DictReader(file))
             field_names = tasks[0].keys() if tasks else["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status']    # Get field input_names from the first table
 
@@ -308,7 +310,7 @@ def Edit_Task(file_path,Task,file_status):
         if not task_found :
             print(f"{task} not found")
             return
-        with open(file_path, 'w' , encoding= 'utf-8', newline= '') as f :
+        with open(file_path, 'r' ,encoding= 'utf-8', newline= '') as f :
             w = csv.DictWriter(f,fieldnames= field_names)
             w.writeheader()
             w.writerows(tasks)
