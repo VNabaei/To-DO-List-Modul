@@ -28,7 +28,7 @@ def Add_List_in_Table_list(ToDoList_Folder,input_name):
                 ,'path' : os.path.join(ToDoList_Folder,f"{input_name}.csv") #برای برسی شناسه to do list  به این نیاز داریم
             }
         ]
-        reader.append(data)
+        reader.extend(data)
     with open (fileTableList_path,"w",encoding='utf-8') as f:
         writer = csv.DictWriter(f,fieldnames=field_names)
         writer.writeheader()
@@ -143,8 +143,9 @@ def Create_New_list(input_name :str):
         tableListPath = os.path.join(ToDoList_Folder,"Table_list.csv")
         with open(tableListPath,'r',encoding='utf-8') as f :
             reader = list(csv.DictReader(f))
-            ToDoList = [row for row in reader if row.get("name","") == input_name ]
-            ToDoList_id = ToDoList["id"]
+            for row in reader :
+                if row.get("name","") == input_name:
+                     ToDoList_id = row.get("id","")
        
         Add_Task(file_path,field_Of_ToDoList,input_name,ToDoList_id)
     else:
