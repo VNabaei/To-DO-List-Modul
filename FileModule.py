@@ -127,13 +127,6 @@ def Create_New_list(input_name :str):
             writer = csv.DictWriter(f,field_Of_ToDoList)
             writer.writeheader() 
         
-    # -------------------------------------------------------------------------------------------------------------------------------------
-    
-    # what is this bug ?
-          
-
-    # -------------------------------------------------------------------------------------------------------------------------------------
-    
      
     # ---- If desired, the file will be completed.   
     # ---- the filed of colums table :
@@ -157,10 +150,10 @@ def Create_New_list(input_name :str):
       
     # ---- File creation operation completed.
     print(f"List {input_name} created successfully at {file_path}")
-    return file_path , input_name
+    return file_path , field_Of_ToDoList ,ToDoList_id 
         
 # Tasks Creator      
-def Add_Task (ToDoList_Path ,field_Of_ToDoList, input_name,ToDoList_Id):
+def Add_Task (ToDoList_Path ,field_Of_ToDoList,ToDoList_Id):
     '''
     This function, in the todolist file,creates a task and fills in the rows that are the tasks .
     
@@ -183,14 +176,14 @@ def Add_Task (ToDoList_Path ,field_Of_ToDoList, input_name,ToDoList_Id):
      
     tasks = []
     while True :
-        task_input_name =input("input the task, for break,input nothing!")
+        task_input_name =input("input the task, for break,input nothing! \n: ")
         if task_input_name == "":
             break
         else :
             task= {
                 "ID" : ID_Generator(ToDoList_Path,ToDoList_Id) 
                 ,"Title": task_input_name
-                ,"Descreaption" : input("add info")
+                ,"Descreaption" : input("add Description : ")
                 ,"DeadLine" : Deadline_Creator()
                 ,"Status" : Status[1]  # 'Todo' as default
                 ,"Creat_at" :datetime.today().date()
@@ -228,8 +221,20 @@ def Show_the_task(file_path,Task):
         for task in tasks:
             print(f"Title: {task.get('title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
 
-  
 def Show_List_ALLTask(ToDoList_Path):
+    '''
+    Displays all tasks in full detail.
+    
+    Parametr(s) :
+    -----------
+    ToDoList_Path : path
+    
+    Return(s):
+    ---------
+    None
+    
+    '''
+    
     if not os.path.exists(ToDoList_Path):
         print(f"{ToDoList_Path} does not exist.")
         return
@@ -326,6 +331,25 @@ def Update_List():
 def Edit_List ():
     #این هم الان اولویت نبست
     pass
+
+def show_All_lists():
+    '''
+    This function displays the Table list values
+    
+    Parametr(s) :
+    --------
+    None
+    
+    Return(s) :
+    --------
+    None
+    '''
+    current_path = os.getcwd()
+    foulder_path = os.path.join(current_path,"TodoLists app")
+    fileTableList_path = os.path.join(foulder_path,"Table_list.csv")
+    
+    if  os.path.exists(fileTableList_path):
+        Show_List_ALLTask(fileTableList_path) 
 
 def Show_List(ToDoList_Path):
     if not os.path.exists(ToDoList_Path):
@@ -425,4 +449,28 @@ def ID_Generator(ToDoList_Path,ToDoList_ID) :
     return f'TDL - {ToDoList_ID} - TSK - {datetime.today().strftime("%Y%m%d%H%M%S")}'+ f'{x:03d}'
     # ID format : TDL - {TDL_ID} - TSK - {YYYYMMDDHHMMSS} + {counter of tasks in this TDL file}
     # آی دی خیلی طولانی شد عذرخواهم
-       
+
+def getPath(list_select):
+    '''
+    This function finds the address of the To Do List from the table list.
+    
+    Parametr(s) :
+    -----------
+    None
+    
+    Return(s) :
+    ---------
+    path
+    
+    '''
+    
+    current_path = os.getcwd()
+    foulder_path = os.path.join(current_path,"TodoLists app")
+    fileTableList_path = os.path.join(foulder_path,"Table_list.csv")
+    with open(fileTableList_path, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)  # هر ردیف رو به شکل دیکشنری میده
+        for row in reader:
+            if row.get('name') == list_select:
+                return row.get('path')
+    return None 
+           
