@@ -9,12 +9,12 @@ def main():
     print ("1.Create a new List\n2.Edit a List\n3.Exit")
     choiceL1 = input("Enter your choice: ")
     if choiceL1 == "1":
-        #---- input the name of the list
+        #---- input the input_name of the list
         List_Title = input("Enter the name of the list: ")          
         #---- create a new list
-        To_Do_List = Lists_Task.To_Do_List(List_Title)
+        # To_Do_List = Lists_Task.To_Do_List(List_Title)
         #---- add the list to the file
-        (path,filename) = FileModule.Create_New_list(To_Do_List)
+        (path,file_name) = FileModule.Create_New_list(List_Title)
         #---- for add tasks this is run in the function Create_New_list
         #---- if the user want to add tasks, this function will be called
         
@@ -24,16 +24,16 @@ def main():
         print("1. Add a new task\n2.Edit a task \n3.Delete a task \n4.View all tasks \n5.Delete List \n6.Update the List \n7.back to main menu \n8.Exit")
         choiceL2 = input("Enter your choise : ")
         if choiceL2 == "1":
-            nameTask = input("Enter the name of the task: ")
+            input_nameTask = input("Enter the name of the task: ")
             # Here you would typically add the task to a list or database
                 
         elif choiceL2 == "2":
             print("Edit a task")
-            ETask = input("Enter the name of the task to edit: ")
+            ETask = input("Enter the input_name of the task to edit: ")
             # if the task is found, you would update it here
                 
         elif choiceL2 == "3":
-            deleteTask = input("Enter the name of the task to delete: ")
+            deleteTask = input("Enter the input_name of the task to delete: ")
             print("Delete a task")
         elif choiceL2 == "4":
                 
