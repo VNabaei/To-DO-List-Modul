@@ -153,7 +153,7 @@ def Create_New_list(input_name :str):
     return file_path , field_Of_ToDoList ,ToDoList_id 
         
 # Tasks Creator      
-def Add_Task (ToDoList_Path ,field_Of_ToDoList,ToDoList_Id):
+def Add_Task (ToDoList_Path ,field_Of_ToDoList = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] , ToDoList_Id = None ):
     '''
     This function, in the todolist file,creates a task and fills in the rows that are the tasks .
     
@@ -192,12 +192,19 @@ def Add_Task (ToDoList_Path ,field_Of_ToDoList,ToDoList_Id):
                 ,"file_status": file_status[0]  # 'created'        
              }
         
-        tasks.append(task)
+        tasks.extend(task)
     #ذخیره سازی در فایل    
-    with open(ToDoList_Path, 'w', newline='', encoding='utf-8') as file:
+    # with open(ToDoList_Path, 'w', newline='', encoding='utf-8') as file:
+    #     writer = csv.DictWriter(file, fieldnames=field_Of_ToDoList)
+    #     writer.writeheader()  
+    #     writer.writerows(tasks)
+    with open(ToDoList_Path, 'a', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=field_Of_ToDoList)
-        writer.writeheader()  
+        if file.tell() == 0:  
+            writer.writeheader()
+        
         writer.writerows(tasks)
+
         
         
     print (f"task(s) saved in {ToDoList_Path} successfully")
@@ -450,6 +457,9 @@ def ID_Generator(ToDoList_Path,ToDoList_ID) :
     # ID format : TDL - {TDL_ID} - TSK - {YYYYMMDDHHMMSS} + {counter of tasks in this TDL file}
     # آی دی خیلی طولانی شد عذرخواهم
 
+# Get Function :
+#----------------------------------------------------------------------
+
 def getPath(list_select):
     '''
     This function finds the address of the To Do List from the table list.
@@ -473,4 +483,54 @@ def getPath(list_select):
             if row.get('name') == list_select:
                 return row.get('path')
     return None 
-           
+
+def getId(list_name: str, task_title: str = None):
+    '''
+    This function returns ID of either a ToDoList or a Task.
+    
+    Parameters
+    ----------
+    list_name : str
+        Name of the ToDoList
+    task_title : str, optional
+        Title of the task (if provided, returns Task ID instead of List ID)
+    
+    Returns
+    -------
+    str or None
+        ID of the ToDoList or Task
+    '''
+    
+    #the path of table list
+    current_path = os.getcwd()
+    folder_path = os.path.join(current_path, "TodoLists app")
+    fileTableList_path = os.path.join(folder_path, "Table_list.csv")
+    
+    
+    if not os.path.exists(fileTableList_path):
+        return None
+    
+    # search in lists
+    with open(fileTableList_path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if row.get("name") == list_name:
+                list_id = row.get("id")
+                list_path = row.get("path")
+                
+                # حالت فقط لیست
+                if task_title is None:
+                    return list_id
+                
+                # حالت تسک خاص
+                if os.path.exists(list_path):
+                    with open(list_path, "r", encoding="utf-8") as task_file:
+                        task_reader = csv.DictReader(task_file)
+                        for task in task_reader:
+                            if task.get("Title", "").strip().lower() == task_title.strip().lower():
+                                return task.get("ID")
+                else:
+                    
+                    return None
+    
+    return None

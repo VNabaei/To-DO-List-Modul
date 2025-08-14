@@ -24,7 +24,10 @@ def main():
         print("1. Add a new task\n2.Edit a task \n3.Delete a task \n4.View all tasks \n5.Delete List \n6.Update the List \n7.back to main menu \n8.Exit")
         choiceL2 = input("Enter your choise : ")
         if choiceL2 == "1":
-            FileModule.Add_Task(path ,field,To_Do_List_ID)
+            List_select= input("what list do you want to add task(s)?")
+            ToDoList_Path = FileModule.getPath(List_select)  
+            # خب اینجا این مشکل رو داریم که باید مقادیر رو از خود جدول استخراج کنیم 
+            FileModule.Add_Task(ToDoList_Path ,field,To_Do_List_ID)
             # input_nameTask = input("Enter the name of the task: ")
             # Here you would typically add the task to a list or database
                 
@@ -52,6 +55,7 @@ def main():
             print("wrong input please try again later :)")
             
     elif choiceL1 == "3" :
+        # کار میکنه ولی زشته ....
         FileModule.show_All_lists()
         List_select= input("what list do you want to show?")
         ToDoList_Path = FileModule.getPath(List_select)    
