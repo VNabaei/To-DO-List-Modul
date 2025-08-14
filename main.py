@@ -1,7 +1,14 @@
 import Lists_Task
 import FileModule
 
-
+def Show2Select():
+        print("select the title of the lists : \n")
+        FileModule.show_All_lists()
+        List_select = input("input the title: \n")
+        List_path = FileModule.getPath(List_select)
+        FileModule.Show_List(List_path)
+        return List_path
+            
     
     
 def main():
@@ -27,21 +34,32 @@ def main():
             List_select= input("what list do you want to add task(s)?")
             ToDoList_Path = FileModule.getPath(List_select)  
             # خب اینجا این مشکل رو داریم که باید مقادیر رو از خود جدول استخراج کنیم 
-            FileModule.Add_Task(ToDoList_Path ,field,To_Do_List_ID)
+            FileModule.Add_Task(ToDoList_Path ,field,FileModule.getId(List_select))
             # input_nameTask = input("Enter the name of the task: ")
             # Here you would typically add the task to a list or database
                 
         elif choiceL2 == "2":
-            print("Edit a task : ")
-            ETask = input("Enter the input_name of the task to edit: ")
+            print("Edit a task -------------------------\n ")
+            print("for edit, do this steps :\n")
+            List_path = Show2Select()
+            
+            ETask = input("Enter the name of the task to edit: ")
             # if the task is found, you would update it here
+            task_path = FileModule.getPath(ETask)
+            FileModule.Edit_Task(List_path,ETask)
                 
         elif choiceL2 == "3":
             deleteTask = input("Enter the input_name of the task to delete: ")
-            print("Delete a task")
+            task_path = FileModule.getPath(deleteTask)
+            FileModule.delete_Task(task_path,deleteTask)
+            
         elif choiceL2 == "4":
-                
-            print("View all tasks")
+            print("select the title of the lists : \n")
+            FileModule.show_All_lists()
+            List_select = input("input the title: \n")
+            List_path = FileModule.getId(List_select)
+            FileModule.Show_List(List_path)
+
         elif choiceL2 == "5":
                     
             print("Delete List")

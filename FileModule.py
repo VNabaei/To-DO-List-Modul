@@ -224,7 +224,7 @@ def Show_the_task(file_path,Task):
         return
     with open(file_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
-        tasks = [row for row in reader if (row.get("Statusfile", "").lower() != "delete" and row.get("title", "").lower() == Task['title'])]
+        tasks = [row for row in reader if (row.get("Statusfile", "").lower() != "delete") and (row.get("title", "").strip().lower() == Task.strip().lower())]
         for task in tasks:
             print(f"Title: {task.get('title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
 
@@ -316,7 +316,7 @@ def Edit_Task(file_path,Task):
                         print("the input is wrong")
                         return
                         
-                task['file_status'] = file_status[2]
+                task['file_status'] = file_status[1]
                 task_found = True
         if not task_found :
             print(f"{Task} not found")
@@ -383,7 +383,7 @@ def Show_List(ToDoList_Path):
 
     print("لیست تسک‌های فعال:")
     for task in tasks:
-        print(f"Title: {task.get('title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
+        print(f"Title: {task.get('Title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}| DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
 
 def delete_List(file_path) :
     if os.path.exists(file_path):
@@ -491,7 +491,7 @@ def getPath(list_select):
     with open(fileTableList_path, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)  # هر ردیف رو به شکل دیکشنری میده
         for row in reader:
-            if row.get('name') == list_select:
+            if row.get('name', '').strip().lower() == list_select.strip().lower():
                 return row.get('path')
     return None 
 
