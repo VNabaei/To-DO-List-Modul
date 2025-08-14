@@ -249,7 +249,7 @@ def Show_List_ALLTask(ToDoList_Path):
         content = f.read()
         print(content)  
  
-def delete_Task(file_path,Task,file_status):
+def delete_Task(file_path,Task):
     '''
     This function changes the file status in the given task to "deleted".
     
@@ -260,9 +260,6 @@ def delete_Task(file_path,Task,file_status):
     
     Task : str
     The task we want to delete
-    
-    file_status : list
-    List containing the file status in the database
     
     Returns :
     -------
@@ -282,20 +279,19 @@ def delete_Task(file_path,Task,file_status):
                 task['file_status'] = file_status[2]
                 task_found = True
         if not task_found :
-            print(f"{task} not found")
+            print(f"{Task} not found")
             return
         with open(file_path, 'w' , encoding= 'utf-8', newline= '') as f :
             w = csv.DictWriter(f,fieldnames= field_names)
             w.writeheader()
             w.writerows(tasks)
 
-def Edit_Task(file_path,Task,file_status):
+def Edit_Task(file_path,Task):
     # تسک مدنظر را پیدا کرده و شاخصه های قابل تغییر را تغییر می دهد
     #و فایل را بازنویسی میکند.
     if not os.path.exists(file_path):
         print(f"{file_path} does not exist.")
-        return
-        
+        return   
     else:
         with open(file_path, 'r',newline='', encoding='utf-8') as file:
             tasks = list(csv.DictReader(file))
@@ -305,28 +301,31 @@ def Edit_Task(file_path,Task,file_status):
         for task in tasks:
             if task['Title'].strip().lower() == Task.strip().lower():
                 Show_the_task(file_path,Task)
-                quest = input('what the filed do you want chang? (1.Title 2.Descreaption 3.DeadLine 4.Status) ')
+                quest = input('what the filed do you want chang? input number!!\n(1.Title 2.Descreaption 3.DeadLine 4.Status) ')
                 match (quest):
-                    case 1:
+                    case "1":
                         task['Title'] = input('enter the title')
-                    case 2:
+                    case "2":
                         task['Descreaption'] = input('enter the info')
-                    case 3:
+                    case "3" :
                         task['DeadLine'] = Deadline_Creator()
-                    case 4: 
+                    case "4": 
                         i= input('enter the status (1.Done, 2.Todo, 3.In Progress)')
-                        task['Status'] = Status[i-1]
+                        task['Status'] = Status[int(i)-1]
+                    case __ :
+                        print("the input is wrong")
+                        return
                         
                 task['file_status'] = file_status[2]
                 task_found = True
         if not task_found :
-            print(f"{task} not found")
+            print(f"{Task} not found")
             return
-        with open(file_path, 'r' ,encoding= 'utf-8', newline= '') as f :
+        with open(file_path, 'w' ,encoding= 'utf-8', newline= '') as f :
             w = csv.DictWriter(f,fieldnames= field_names)
             w.writeheader()
             w.writerows(tasks)
-    pass
+    
      
    
 # ---- for list
@@ -354,9 +353,20 @@ def show_All_lists():
     current_path = os.getcwd()
     foulder_path = os.path.join(current_path,"TodoLists app")
     fileTableList_path = os.path.join(foulder_path,"Table_list.csv")
+     
+        
+    with open(fileTableList_path, "r", encoding="utf-8") as f:
+        lists = list(csv.DictReader(f))
+        active_lists = [lst for lst in lists if lst.get("file_status") != file_status[2]]
+        if not active_lists:
+            print("No active lists available.")
+            return
+        print("the title of active Lists : \n")
+        for lst in active_lists:
+            print(f" * {lst.get('name',)}\n")    
     
-    if  os.path.exists(fileTableList_path):
-        Show_List_ALLTask(fileTableList_path) 
+    
+
 
 def Show_List(ToDoList_Path):
     if not os.path.exists(ToDoList_Path):
@@ -466,7 +476,8 @@ def getPath(list_select):
     
     Parametr(s) :
     -----------
-    None
+    name : str
+    the name of to do list or task
     
     Return(s) :
     ---------
