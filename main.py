@@ -31,6 +31,7 @@ def main():
         print("1. Add a new task\n2.Edit a task \n3.Delete a task \n4.View all tasks \n5.Delete List \n6.Update the List \n7.back to main menu \n8.Exit")
         choiceL2 = input("Enter your choise : ")
         if choiceL2 == "1":
+            print("add task(s) -------------------------\n ")
             List_select= input("what list do you want to add task(s)?")
             ToDoList_Path = FileModule.getPath(List_select)  
             # خب اینجا این مشکل رو داریم که باید مقادیر رو از خود جدول استخراج کنیم 
@@ -49,11 +50,13 @@ def main():
             FileModule.Edit_Task(List_path,ETask)
                 
         elif choiceL2 == "3":
+            print("delete a task -------------------------\n ")
             deleteTask = input("Enter the input_name of the task to delete: ")
             task_path = FileModule.getPath(deleteTask)
             FileModule.delete_Task(task_path,deleteTask)
             
         elif choiceL2 == "4":
+            print("view all tasks in list ----------------\n ")
             print("select the title of the lists : \n")
             FileModule.show_All_lists()
             List_select = input("input the title: \n")
@@ -61,10 +64,12 @@ def main():
             FileModule.Show_List(List_path)
 
         elif choiceL2 == "5":
+            print("delete a list -------------------------\n ")
                     
-            print("Delete List")
+            
         elif choiceL2 == "6":
-            print("Update the List")
+            print("Update the List -----------------------\n ")
+            
         elif choiceL2 == "7":
             main()
         elif choiceL2 == "8":

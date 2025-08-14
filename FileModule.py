@@ -366,8 +366,6 @@ def show_All_lists():
             print(f" * {lst.get('name',)}\n")    
     
     
-
-
 def Show_List(ToDoList_Path):
     if not os.path.exists(ToDoList_Path):
         print(f"{ToDoList_Path} does not exist.")
