@@ -16,6 +16,7 @@ def main():
     print ("1.Create a new List\n2.Edit a List\n3.show the tasks \n4.Exit")
     choiceL1 = input("Enter your choice: ")
     if choiceL1 == "1":
+        print("Creating new list ...............................\n ")
         #---- input the input_name of the list
         List_Title = input("Enter the name of the list: ")          
         #---- create a new list
@@ -28,14 +29,19 @@ def main():
 
         
     elif choiceL1 == "2":
-        print("1. Add a new task\n2.Edit a task \n3.Delete a task \n4.View all tasks \n5.Delete List \n6.Update the List \n7.back to main menu \n8.Exit")
+        print("Editing .........................................\n ")
+
+        print("1.Add a new task\n2.Edit a task \n3.Delete a task \n4.View all tasks \n5.Delete List \n6.Update the List \n7.back to main menu \n8.Exit")
         choiceL2 = input("Enter your choise : ")
         if choiceL2 == "1":
             print("add task(s) -------------------------\n ")
-            List_select= input("what list do you want to add task(s)?")
+            print("for adding, do this steps :\n")
+            FileModule.show_All_lists()
+            
+            List_select= input("what list do you want to add task(s)? ")
             ToDoList_Path = FileModule.getPath(List_select)  
             # خب اینجا این مشکل رو داریم که باید مقادیر رو از خود جدول استخراج کنیم 
-            FileModule.Add_Task(ToDoList_Path ,field,FileModule.getId(List_select))
+            FileModule.Add_Task(ToDoList_Path ,FileModule.getId(List_select))
             # input_nameTask = input("Enter the name of the task: ")
             # Here you would typically add the task to a list or database
                 
@@ -51,42 +57,70 @@ def main():
                 
         elif choiceL2 == "3":
             print("delete a task -------------------------\n ")
-            deleteTask = input("Enter the input_name of the task to delete: ")
-            task_path = FileModule.getPath(deleteTask)
-            FileModule.delete_Task(task_path,deleteTask)
+            print("for delete, do this steps :\n")
+            List_path = Show2Select()
+            
+            deleteTask = input("Enter the name of the task to delete: ")
+            FileModule.delete_Task(List_path,deleteTask)
+            print("The process was completed successfully.")
             
         elif choiceL2 == "4":
             print("view all tasks in list ----------------\n ")
             print("select the title of the lists : \n")
             FileModule.show_All_lists()
             List_select = input("input the title: \n")
-            List_path = FileModule.getId(List_select)
+            List_path = FileModule.getPath(List_select)
             FileModule.Show_List(List_path)
 
         elif choiceL2 == "5":
             print("delete a list -------------------------\n ")
-                    
+
+            FileModule.show_All_lists()
+            print("select the title of the lists : \n")
+            List_select = input("input the title: \n")
+            List_path = FileModule.getPath(List_select)
+            
+            answer = input("Do you want to delete it completely? (y/n) ")
+            #-------------------------------
+            tableListPath = FileModule.getPath_TableList()
+            #-------------------------------
+            if  answer.lower().split() == 'y':
+                FileModule.delete_List(List_path) 
+                FileModule.change_status_to_delete(tableListPath,List_select) 
+                # در اینجا باید وضعیت تسک در جلدول اصلی، به پاک ده تغییر کند
+            else:
+                FileModule.change_status_to_delete(tableListPath,List_select)    
             
         elif choiceL2 == "6":
             print("Update the List -----------------------\n ")
             
         elif choiceL2 == "7":
+            print("main menu -----------------------------\n ")
             main()
         elif choiceL2 == "8":
+            print("exiting -------------------------------\n ")
+            print("(T_T)\n ")
             exit()
         else:
             print("wrong input please try again later :)")
             
     elif choiceL1 == "3" :
+        print("Showing : .................................\n ")
         # کار میکنه ولی زشته ....
         FileModule.show_All_lists()
-        List_select= input("what list do you want to show?")
+        List_select= input("what list do you want to show?\n:")
         ToDoList_Path = FileModule.getPath(List_select)    
-        FileModule.Show_List_ALLTask(ToDoList_Path) 
+        # FileModule.Show_List_ALLTask(ToDoList_Path) #show all atribiut
+        # print("\n")
+        FileModule.Show_List(ToDoList_Path)
             
     elif choiceL1 == "4":
+        print("Exiting from prograss .....................\n ")
+
         print("Khosh Galdin")
     else :
+        print("Unknow .-.-.-.-.-.-.-.-.-.-.-.-.-..-.--.-.-.-.-.-\n ")
+
         print("wrong input please try again later :)")
         
         
