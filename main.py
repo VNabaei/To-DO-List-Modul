@@ -84,7 +84,7 @@ def main():
             #-------------------------------
             tableListPath = FileModule.getPath_TableList()
             #-------------------------------
-            if  answer.lower().split() == 'y':
+            if  answer.lower().strip() == 'y':
                 FileModule.delete_List(List_path) 
                 FileModule.change_status_to_delete(tableListPath,List_select) 
                 # در اینجا باید وضعیت تسک در جلدول اصلی، به پاک ده تغییر کند

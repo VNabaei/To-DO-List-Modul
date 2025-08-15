@@ -408,9 +408,9 @@ def change_status_to_delete(file_path,list_name):
             w.writeheader()
             w.writerows(lists)
             
-        print(f"{file_path} has been deleted successfully.")
+        print(f"{list_name} has been deleted successfully.")
     else:
-        print(f"{file_path} does not exist.")   
+        print(f"{list_name} does not exist.")   
     
  
 # general function:
@@ -572,3 +572,13 @@ def getPath_TableList():
     foulder_path = os.path.join(current_path,"TodoLists app")
     fileTableList_path = os.path.join(foulder_path,"Table_list.csv")
     return fileTableList_path
+
+
+'''
+برای آپدیت های بعدی 
+1. اضافه کردن تابع تاریخچه
+در این تابع سعی می شود اینکه کدام لیست ایجاد حذف یا آپدیت شده است و اینمه به لیست چه تسکی اضافه شده در جه تاریخی را اضافه کنم
+2. گزینه آپدیت لیست
+در این گزینه بعد از هر بار تغییرات درونلیست ،حالت اولیه از ایجاد شده به ویرایش شده بر میکردد
+3. شاید تغییرات ظاهری
+'''
