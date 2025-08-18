@@ -5,8 +5,8 @@ import csv
 
 #region : the variables in FileModule.py
 # -------------------------------------------------------------
-file_status = ['created', 'edited', 'deleted'] # وضعیت فایل ها در دیتابیس
-Status = ['Done', 'Todo', 'In Progress'] # وضعیت تسک ها در دیتابیس
+file_status = ['created', 'edited', 'deleted'] #INFO : Status of files in the database
+Status = ['Done', 'Todo', 'In Progress'] #INFO :Task status in the database
 field_Of_ToDoList = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
 #endregion
 
@@ -14,33 +14,40 @@ field_Of_ToDoList = ["ID","Title","Descreaption","DeadLine","Status","Creat_at",
 # -------------------------------------------------------------
 #Folder Handeller :
 def Add_List_in_Table_list(ToDoList_Folder,input_Title):
-    fileTableList_path = os.path.join(ToDoList_Folder,"Table_list.csv") #ساخت مسیر فایل جدول لیست 
-    with open(fileTableList_path, 'r', newline='', encoding='utf-8') as file:
-        reader = list(csv.DictReader(file))
-        field_names = reader[0].keys() if reader else["id","Title","creator","time","file_status","path"]    # Get field Titles from the first table
-        data = [
-            {
-                'id':datetime.today().strftime("%Y%m%d%H%M%S")
-                ,'Title' : input_Title
-                ,'creator' : Get_User()
-                ,'time' : datetime.today()
-                ,'file_status' : 'created'
-                ,'path' : os.path.join(ToDoList_Folder,f"{input_Title}.csv") #برای برسی شناسه to do list  به این نیاز داریم
-            }
-        ]
-        reader.extend(data)
-    with open (fileTableList_path,"w",newline='',encoding='utf-8') as f:
-        writer = csv.DictWriter(f,fieldnames=field_names)
-        writer.writeheader()
-        writer.writerows(reader)
+    fileTableList_path = os.path.join(ToDoList_Folder,"Table_list.csv") #INFO : Create the list table file path
+    try :
+        with open(fileTableList_path, 'r', newline='', encoding='utf-8') as file:
+            reader = list(csv.DictReader(file))
+            field_names = reader[0].keys() if reader else["id","Title","creator","time","file_status","path"]    # Get field Titles from the first table
+            data = [
+                {
+                    'id':datetime.today().strftime("%Y%m%d%H%M%S")
+                    ,'Title' : input_Title
+                    ,'creator' : Get_User()
+                    ,'time' : datetime.today()
+                    ,'file_status' : 'created'
+                    ,'path' : os.path.join(ToDoList_Folder,f"{input_Title}.csv") #INFO : We need this to check the to do list ID
+                    }
+            ]
+            reader.extend(data)
+    except ValueError as error :
+        print(f"The operation to create the lists table failed. Error: {error}\n")
+        
+    try :    
+        with open (fileTableList_path,"w",newline='',encoding='utf-8') as f:
+            writer = csv.DictWriter(f,fieldnames=field_names)
+            writer.writeheader()
+            writer.writerows(reader)
+    except ValueError as error :
+        print("error in csv file : dict contains fields not in fieldnames")
         
         
 # -------------------------------------------------------------
 # FolderCreator :
 def Foulder_of_ToDoList_Creator (ToDoList_Folder,input_Title):
         os.makedirs(ToDoList_Folder)
-        fileTableList_path = os.path.join(ToDoList_Folder,"Table_list.csv") #ساخت مسیر فایل داده
-        #ساخت جدول حاوی اطلاعات لیست ها
+        fileTableList_path = os.path.join(ToDoList_Folder,"Table_list.csv") #INFO : creat path 
+        #INFO : Create a table containing list information
         fieds_of_table_list = ['id','Title','creator','time','file_status','path']
     
         data = [
@@ -49,16 +56,18 @@ def Foulder_of_ToDoList_Creator (ToDoList_Folder,input_Title):
                 ,'Title' : input_Title
                 ,'creator' : Get_User()
                 ,'time' : datetime.today()
-                # .strftime("%Y%m%d%H%M%S") به صورت شی زمان ذخیره بشه بهتره شاید
                 ,'file_status' : 'created'
-                ,'path' : os.path.join(ToDoList_Folder,f"{input_Title}.csv") #برای برسی شناسه to do list  به این نیاز داریم
+                ,'path' : os.path.join(ToDoList_Folder,f"{input_Title}.csv") #INFO : We need this to check the to do list ID
             }
          ]
-    
-        with open(fileTableList_path, 'w', newline='', encoding='utf-8') as file:
-            writer = csv.DictWriter(file, fieldnames=fieds_of_table_list)
-            writer.writeheader()  
-            writer.writerows(data)
+        try : 
+            with open(fileTableList_path, 'w', newline='', encoding='utf-8') as file:
+                writer = csv.DictWriter(file, fieldnames=fieds_of_table_list)
+                writer.writeheader()  
+                writer.writerows(data)
+        except ValueError as error:
+            print(f"The operation to create the Folder of todo lists failed. Error: {error}\n")
+            
 
 #endregion    
 
@@ -87,52 +96,28 @@ def Create_New_list(input_Title :str):
     ToDoList_Folder = os.path.join(current_dir,ToDoList_File_name)
     if not os.path.exists(ToDoList_Folder):
         Foulder_of_ToDoList_Creator (ToDoList_Folder,input_Title)
-        # os.makedirs(ToDoList_Folder)
-        # fileTableList_path = os.path.join(ToDoList_Folder,"Table_list.csv") #ساخت مسیر فایل داده
-        # #ساخت جدول حاوی اطلاعات لیست ها
-        # fieds_of_table_list = ['id','input_Title','creator','time','file_status']
-    
-        # data = [
-        #     {
-        #         'id':datetime.today().strftime("%Y%m%d%H%M%S")
-        #         ,'Title' : input_Title
-        #         ,'creator' : Get_User()
-        #         ,'time' : datetime.today()
-        #         # .strftime("%Y%m%d%H%M%S") به صورت شی زمان ذخیره بشه بهتره شاید
-        #         ,'file_status' : 'created'
-        #         ,'path' : os.path.join(ToDoList_Folder,f"{input_Title}.csv") #برای برسی شناسه to do list  به این نیاز داریم
-        #     }
-        #  ]
-    
-        # with open(fileTableList_path, 'w', newline='', encoding='utf-8') as file:
-        #     writer = csv.DictWriter(file, field_names=fieds_of_table_list)
-        #     writer.writeheader()  
-        #     writer.writerows(data)
     else :
         Add_List_in_Table_list(ToDoList_Folder,input_Title)
         
-    file_path = os.path.join(ToDoList_Folder,f"{input_Title}.csv") #ساخت مسیر فایل داده
+    file_path = os.path.join(ToDoList_Folder,f"{input_Title}.csv") # INFO : creat file path
 
     
-    #برسی وجود داشتن از قبل یا نه
+    #INFO : Checks if the file already exists.
     if os.path.exists(file_path):
-        #اگر موجود بود
+        #INFO : if exists
         ans = input ("this list is exists now!\nDo you want replace it ?(y/n)") 
-        if ans.upper() != 'y': #اگر نخواهد فایل جایگذین شود عملیات متوقف می شود
+        if ans.upper() != 'y': #INFO : If the file is not replaced, the operation will stop.
             return
-        else : #اگر بخواهد جایگذین شود مسیر فایل قبلی حذف و مسیر جدید ساخته می شود
+        else : #INFO : If it wants to be replaced, the previous file path is deleted and a new path is created.
             delete_List(file_path)
             Create_New_list(input_Title) 
-    else :#درصورتی که فایل وجود نداشت
-        # TDList_File_Class = Lists_Task.To_Do_List(input_Title) Creat the TDLclass 
+    else :#INFO : if the file not exsist
         with open(file_path,"w",newline='',encoding= 'utf-8') as f :
             writer = csv.DictWriter(f,field_Of_ToDoList)
             writer.writeheader() 
         
      
     # ---- If desired, the file will be completed.   
-    # ---- the filed of colums table :
-
     
     #Add the tasks :
     ans =input("Do you want add tasks to this list (y/n)? : ")
@@ -201,17 +186,16 @@ def Add_Task (ToDoList_Path, ToDoList_Id = None ):
              }
         
         tasks.append(task)
-    #ذخیره سازی در فایل    
-    # with open(ToDoList_Path, 'w', newline='', encoding='utf-8') as file:
-    #     writer = csv.DictWriter(file, fieldnames=field_Of_ToDoList)
-    #     writer.writeheader()  
-    #     writer.writerows(tasks)
-    with open(ToDoList_Path, 'a', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=field_Of_ToDoList)
-        if file.tell() == 0:  
-            writer.writeheader()
+    try :
+        with open(ToDoList_Path, 'a', newline='', encoding='utf-8') as file:
+            writer = csv.DictWriter(file, fieldnames=field_Of_ToDoList)
+            if file.tell() == 0:  
+                writer.writeheader()
         
-        writer.writerows(tasks)
+            writer.writerows(tasks)
+    except ValueError as error:
+        print(f"The operation to add the task to the list failed. Error:{error}")
+        
 
         
         
@@ -220,9 +204,12 @@ def Add_Task (ToDoList_Path, ToDoList_Id = None ):
  
 # if no task to input :
 def Null_ToDoList_creator(field_Of_ToDoList,ToDoList_Path):
-    with open(ToDoList_Path, 'w', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=field_Of_ToDoList)
-        writer.writeheader()  
+    try :
+        with open(ToDoList_Path, 'w', newline='', encoding='utf-8') as file:
+            writer = csv.DictWriter(file, fieldnames=field_Of_ToDoList)
+            writer.writeheader()  
+    except ValueError as error :
+        print (f"The operation to create the todo list failed with -No task defined-. Error:{error}\n")
  #endregion  
 #endregion      
 
@@ -230,6 +217,20 @@ def Null_ToDoList_creator(field_Of_ToDoList,ToDoList_Path):
 #----------------------------------------------
 #region : ---- for task 
 def Show_the_task(file_path,Task):
+    #NOTE : This function is currently not used in the application menu.
+    
+    '''
+    This function displays the desired task.
+    Parametr(s):
+    -----------
+    file_path : path.
+        the path of todo list
+    Task : str.
+        the name of The task in question
+    Return(s):
+    ----------
+    None
+    '''
     if not os.path.exists(file_path):
         return
     with open(file_path, "r", encoding="utf-8") as f:
@@ -239,6 +240,8 @@ def Show_the_task(file_path,Task):
             print(f"Title: {task.get('title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
 
 def Show_List_ALLTask(ToDoList_Path):
+    #NOTE :This function is currently not used in the application menu.
+    #DEPRECATED : For User friendly, use the Show_list function instead of this function.
     '''
     Displays all tasks in full detail.
     
@@ -284,22 +287,45 @@ def delete_Task(file_path,Task):
             field_names = tasks[0].keys() if tasks else["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status']    # Get field input_Titles from the first table
 
         task_found = False
+        data = []
         for task in tasks:
-            if task['Title'].strip().lower() == Task.strip().lower():
-                task['file_status'] = file_status[2]
+            if  task['Title'].strip().lower() == Task.strip().lower():
+                # task['file_status'] = file_status[2] NOTE : The log will be recorded in the action record.
+                #TODO : recorde the log
                 task_found = True
+            else :
+                data.append(task)
+                
         if not task_found :
             print(f"{Task} not found")
             return
-        with open(file_path, 'w' , encoding= 'utf-8', newline= '') as f :
-            w = csv.DictWriter(f,fieldnames= field_names)
-            w.writeheader()
-            w.writerows(tasks)
+        try :
+            with open(file_path, 'w' , encoding= 'utf-8', newline= '') as f :
+                w = csv.DictWriter(f,fieldnames= field_names)
+                w.writeheader()
+                w.writerows(data)
+        except ValueError as error :
+            print(f"The task deletion operation failed while overwriting the file. Error: {error} \n")
 
 
 def Edit_Task(file_path,Task):
-    # تسک مدنظر را پیدا کرده و شاخصه های قابل تغییر را تغییر می دهد
-    #و فایل را بازنویسی میکند.
+    '''
+    Finds the desired task and changes the modifiable attributes
+    and overwrites the file.
+    
+    Parametr(s):
+    ------------
+    file_path : path.
+        path of todo list
+    Task : str.
+        the title of the task you want to edit
+        
+    Return(s):
+    ----------
+    None
+    
+    '''
+
     if not os.path.exists(file_path):
         print(f"{file_path} does not exist.")
         return   
@@ -332,21 +358,26 @@ def Edit_Task(file_path,Task):
         if not task_found :
             print(f"{Task} not found")
             return
-        with open(file_path, 'w' ,encoding= 'utf-8', newline= '') as f :
-            w = csv.DictWriter(f,fieldnames= field_names)
-            w.writeheader()
-            w.writerows(tasks)
+        try :
+            
+            with open(file_path, 'w' ,encoding= 'utf-8', newline= '') as f :
+                w = csv.DictWriter(f,fieldnames= field_names)
+                w.writeheader()
+                w.writerows(tasks)
+        except ValueError as error :
+            print(f"The task edit operation failed while overwriting the file. Error:{error}\n")
+                
 #endregion    
      
    
 #region : ---- for list
             
 def Update_List():
-    #فکر کنم این الان نیاز نباشه
+    #TODO : in progress
     pass
 
 def Edit_List ():
-    #این هم الان اولویت نبست
+    #TODO : In progress
     pass
 
 def show_All_lists():
@@ -365,19 +396,33 @@ def show_All_lists():
     foulder_path = os.path.join(current_path,"TodoLists app")
     fileTableList_path = os.path.join(foulder_path,"Table_list.csv")
      
-        
-    with open(fileTableList_path, "r", encoding="utf-8") as f:
-        lists = list(csv.DictReader(f))
-        active_lists = [lst for lst in lists if lst.get("file_status") != file_status[2]]
-        if not active_lists:
-            print("No active lists available.")
-            return
-        print("the title of active Lists : \n")
-        for lst in active_lists:
-            print(f" * {lst.get('Title',)}\n")    
-    
+    try :    
+        with open(fileTableList_path, "r", encoding="utf-8") as f:
+            lists = list(csv.DictReader(f))
+            active_lists = [lst for lst in lists if lst.get("file_status") != file_status[2]]
+            if not active_lists:
+                print("No active lists available.")
+                return
+            print("the title of active Lists : \n")
+            for lst in active_lists:
+                print(f" * {lst.get('Title',)}\n")    
+    except ValueError as error :
+        print(f"The operation to show the todo list failed. Error:{error}\n")
     
 def Show_List(ToDoList_Path):
+    '''
+    this function show the all task in todo list
+    Details displayed:
+    "Title","Descreaption","Status","Dead line" & "Created at" of the tasks in todo list
+    
+    Parametr(s):
+    -----------
+    ToDoList_Path : path
+    
+    Return(s):
+    ---------
+    None
+    '''
     if not os.path.exists(ToDoList_Path):
         print(f"{ToDoList_Path} does not exist.")
         return
@@ -420,10 +465,13 @@ def delete_List(file_path,tableListPath) :
             for lst in lists :
                 if lst.get("path") != file_path:
                     rows.append(lst)
-        with open(tableListPath,'w',encoding='utf-8', newline='') as f:
-            written = csv.DictWriter(f,fieldnames=field_names)
-            written.writeheader()
-            written.writerows(rows)
+        try:
+            with open(tableListPath,'w',encoding='utf-8', newline='') as f:
+                written = csv.DictWriter(f,fieldnames=field_names)
+                written.writeheader()
+                written.writerows(rows)
+        except ValueError as error :
+            print(f"The operation to remove a list from the todo list failed while rewriting the table list file. Error:{error}\n")
             
         print(f"{file_path} has been deleted successfully.")
     else:
@@ -473,6 +521,17 @@ def change_status_to_delete(file_path,list_Title):
 #region : General function:
 # ---------------------------------------------------------------------
 def Get_User():
+    '''
+    Getting User from operation system
+    
+    Parametr(s):
+    ------------
+    None
+    
+    Return(s):
+    ----------
+    user or Unknown :str
+    '''
     try:
         user = getpass.getuser()
         return user
@@ -483,19 +542,35 @@ def Editor():
     '''
     this function get user when the edit function called
     
-    Parametrs:
+    Parametr(s):
     ---------
     null
     
-    Returns:
+    Return(s):
     -------
     the user that editied the TDL/TSK
     '''
     return Get_User()
 
 def Deadline_Creator():
+    '''
+    It takes a date from the user and checks that its format is Y /MM /DD. And the date is in the future. If the user does not enter a date, it outputs the date of that day.
+    This operation continues until the user enters valid data.
+
+    Parametr(s):
+    ------------
+    None
+    
+    Return(s):
+    ----------
+    date : str.
+        in YY/MM/DD format
+    today's date : str
+        when the user input noting
+        
+    '''
     while True:
-        ddline_input = input("inter the DDline (Year/month/day) e.g. : 2025/07/31  : ") # در اینجا یه برسی مقدار داده شده هم اجرا شود.
+        ddline_input = input("inter the DDline (Year/month/day) e.g. : 2025/07/31  : ") 
         if ddline_input :
             try:
                 ddline_date = datetime.strptime(ddline_input, "%Y/%m/%d").date()
@@ -516,34 +591,48 @@ def Deadline_Creator():
             return ddline_date
             break #exit the loop if no date is provided
       
-def ID_Generator(ToDoList_Path,ToDoList_ID) :
+def ID_Generator(TodoList_Path,ToDoList_ID) :
+    #TODO : Optimize
     '''
     This function get the last id and creat the next id 
+    
+    Parametr(s) : 
+    -------------
+    TodoList_Path : path.
+        the path of table list
+    ToDoList_ID : str
+        the ID of current todo list 
+    
+    Return(s):
+    ----------
+    Task ID : str
+        ID format : TDL - {TDL_ID} - TSK - {YYYYMMDDHHMMSS} + {counter of tasks in this TDL file}
+
     '''
-    with open(ToDoList_Path, 'r', encoding='utf-8') as f:
+    with open(TodoList_Path, 'r', encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
 
         if rows:
             last_row = rows[-1]
             id = last_row["ID"]
      
-            # از فایل fileTDL در آخرین سطر، ستون Id  رو میخونیم و میریزیم توی اینجا
-            x = int(id[43:]) # البته فقط برای این فرمت آی دی کار میکنه
+            x = int(id[43:]) #NOTE : It only works for this ID format. 
             x += 1
             
-            #-----------------
-            # برای جدا کردن بخش شمارنده راه دیگه ای هم هست ولی فعلا استفاده نمیکنم 
+            #region : for optimize-----------------
+            #NOTE : There is another way to separate the counter section, but I am not using it right now.
             # match = re.search(r'(\d+)$', id)  # آخرین عدد رو می‌گیره
             # if match:
             #     x = int(match.group(1)) + 1
             # else:
             #     x = 1
+            #endregion
             
         else :
             x = 0
     return f'TDL - {ToDoList_ID} - TSK - {datetime.today().strftime("%Y%m%d%H%M%S")}'+ f'{x:03d}'
-    # ID format : TDL - {TDL_ID} - TSK - {YYYYMMDDHHMMSS} + {counter of tasks in this TDL file}
-    # آی دی خیلی طولانی شد عذرخواهم
+    #NOTE : ID format : TDL - {TDL_ID} - TSK - {YYYYMMDDHHMMSS} + {counter of tasks in this TDL file}
+    #review : ID is too long, sorry.
 
 # Get Function :
 #----------------------------------------------------------------------
@@ -567,7 +656,7 @@ def getPath(list_select):
     foulder_path = os.path.join(current_path,"TodoLists app")
     fileTableList_path = os.path.join(foulder_path,"Table_list.csv")
     with open(fileTableList_path, 'r', encoding='utf-8') as f:
-        reader = csv.DictReader(f)  # هر ردیف رو به شکل دیکشنری میده
+        reader = csv.DictReader(f) 
         for row in reader:
             if row.get('Title', '').strip().lower() == list_select.strip().lower():
                 return row.get('path')
@@ -607,11 +696,11 @@ def getId(list_Title: str, task_title: str = None):
                 list_id = row.get("id")
                 list_path = row.get("path")
                 
-                # حالت فقط لیست
+                #just for list
                 if task_title is None:
                     return list_id
                 
-                # حالت تسک خاص
+                # Just for task selected
                 if os.path.exists(list_path):
                     with open(list_path, "r", encoding="utf-8") as task_file:
                         task_reader = csv.DictReader(task_file)
@@ -625,6 +714,18 @@ def getId(list_Title: str, task_title: str = None):
     return None
 
 def getPath_TableList():
+    '''
+    This function returns the path of the table of todo list when the program is running.
+    
+    Parametr(s):
+    -----------
+    None
+    
+    Return(s):
+    ---------
+    path of table list : path
+    
+    '''
     current_path = os.getcwd()
     foulder_path = os.path.join(current_path,"TodoLists app")
     fileTableList_path = os.path.join(foulder_path,"Table_list.csv")
