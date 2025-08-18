@@ -2,15 +2,15 @@ import os
 from datetime import datetime
 import getpass
 import csv
-# import  Lists_Task  // با جدول کار می کنم نظرم عوض شد
 
-#the variables in FileModule.py
+#region : the variables in FileModule.py
 # -------------------------------------------------------------
 file_status = ['created', 'edited', 'deleted'] # وضعیت فایل ها در دیتابیس
 Status = ['Done', 'Todo', 'In Progress'] # وضعیت تسک ها در دیتابیس
 field_Of_ToDoList = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
+#endregion
 
-#the functions in FileModule.py
+#region : the functions in FileModule.py
 # -------------------------------------------------------------
 #Folder Handeller :
 def Add_List_in_Table_list(ToDoList_Folder,input_Title):
@@ -59,10 +59,12 @@ def Foulder_of_ToDoList_Creator (ToDoList_Folder,input_Title):
             writer = csv.DictWriter(file, fieldnames=fieds_of_table_list)
             writer.writeheader()  
             writer.writerows(data)
-    
 
+#endregion    
+
+#region : To Do List
 # -------------------------------------------------------------
-# To Do List file creator : 
+#region : To Do List file creator : 
 
 def Create_New_list(input_Title :str):
     '''
@@ -151,8 +153,14 @@ def Create_New_list(input_Title :str):
     # ---- File creation operation completed.
     print(f"List {input_Title} created successfully at {file_path}")
     return file_path , field_Of_ToDoList ,ToDoList_id 
-        
-# Tasks Creator      
+#endregion        
+
+#endregion
+
+#region : Task
+# -------------------------------------------------------------
+
+#region : Tasks Creator      
 def Add_Task (ToDoList_Path, ToDoList_Id = None ):
     '''
     This function, in the todolist file,creates a task and fills in the rows that are the tasks .
@@ -215,10 +223,12 @@ def Null_ToDoList_creator(field_Of_ToDoList,ToDoList_Path):
     with open(ToDoList_Path, 'w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=field_Of_ToDoList)
         writer.writeheader()  
-         
-#the operation Function :
+ #endregion  
+#endregion      
+
+#region : the operation Function :
 #----------------------------------------------
-# ---- for task 
+#region : ---- for task 
 def Show_the_task(file_path,Task):
     if not os.path.exists(file_path):
         return
@@ -326,10 +336,10 @@ def Edit_Task(file_path,Task):
             w = csv.DictWriter(f,fieldnames= field_names)
             w.writeheader()
             w.writerows(tasks)
-    
+#endregion    
      
    
-# ---- for list
+#region : ---- for list
             
 def Update_List():
     #فکر کنم این الان نیاز نباشه
@@ -420,7 +430,8 @@ def delete_List(file_path,tableListPath) :
         print(f"{file_path} does not exist.")    
 
 def change_status_to_delete(file_path,list_Title):
-    
+    # NOTE : This function is currently unused.
+    # DEPRECATED: Use logging instead of this function.
     '''
     this function chang the status of file (that have same Title to list Title) to deleted in table list
     
@@ -456,9 +467,10 @@ def change_status_to_delete(file_path,list_Title):
         print(f"{list_Title} has been deleted successfully.")
     else:
         print(f"{list_Title} does not exist.")   
-    
+
+#endregion    
  
-# general function:
+#region : General function:
 # ---------------------------------------------------------------------
 def Get_User():
     try:
@@ -618,12 +630,11 @@ def getPath_TableList():
     fileTableList_path = os.path.join(foulder_path,"Table_list.csv")
     return fileTableList_path
 
+#endregion
 
-'''
-برای آپدیت های بعدی 
-1. اضافه کردن تابع تاریخچه
-در این تابع سعی می شود اینکه کدام لیست ایجاد حذف یا آپدیت شده است و اینمه به لیست چه تسکی اضافه شده در جه تاریخی را اضافه کنم
-2. گزینه آپدیت لیست
-در این گزینه بعد از هر بار تغییرات درونلیست ،حالت اولیه از ایجاد شده به ویرایش شده بر میکردد
-3. شاید تغییرات ظاهری
-'''
+#endregion
+
+#region : TODO
+#TODO 1 :Logging and sending
+#TODO 2 :List Upgrating in menu
+#endregion
