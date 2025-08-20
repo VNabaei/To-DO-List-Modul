@@ -6,7 +6,7 @@ import csv
 #region : the variables in FileModule.py
 # -------------------------------------------------------------
 file_status = ['created', 'edited', 'deleted'] #INFO : Status of files in the database
-Status = ['Done', 'Todo', 'In Progress'] #INFO :Task status in the database
+Status = ['Done', 'Todo', 'In Progress','Deleyed'] #INFO :Task status in the database
 field_Of_ToDoList = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
 #endregion
 
@@ -430,11 +430,33 @@ def Show_List(ToDoList_Path):
     with open(ToDoList_Path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         tasks = [row for row in reader if row.get("file_status", "").lower() != file_status[2]]
+        #TODO : show status in tasks
+        ToDo_Conter = 0
+        Done_Conter = 0 
+        InProgress_conter = 0
+        Deleyed_conter = 0
+        for row in tasks :
+            check = row.get('Status')
+            match check :
+                case "Todo" :
+                    ToDo_Conter += ToDo_Conter
+                case "Done":
+                    Done_Conter += Done_Conter
+                case "InProgress_conter" :
+                    InProgress_conter += InProgress_conter
+                case "Deleyed" :
+                    Deleyed_conter += Deleyed_conter
+                case _ :
+                    print("warning : check the status")
+                    
 
     if not tasks:
         print("no active task was found")
         return
-
+    print("in this To Do lists :")
+    print(f"درصد پیشروی لیست :{list_Status(ToDoList_Path)}\n")
+    print("-----------------------------------------------------")
+    print(f"{Done_Conter} task(S) was Done \n|{InProgress_conter} task(s) in progress \n|{ToDo_Conter} task(s) To Do \n|{Deleyed_conter} task(s) is deleyed \n")
     print("Active tasks in list:")
     for task in tasks:
         print(f"Title: {task.get('Title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}| DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
@@ -516,6 +538,31 @@ def change_status_to_delete(file_path,list_Title):
     else:
         print(f"{list_Title} does not exist.")   
 
+def list_Status(ToDoList_Path):
+    with open(ToDoList_Path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        tasks = [row for row in reader if row.get("file_status", "").lower() != file_status[2]]
+        #TODO : show status in tasks
+        ToDo_Conter = 0
+        Done_Conter = 0 
+        InProgress_conter = 0
+        Deleyed_conter = 0
+        conter = 0
+        for row in tasks :
+            check = row.get('Status')
+            conter +=conter
+            match check :
+                case "Todo" :
+                    ToDo_Conter += ToDo_Conter
+                case "Done":
+                    Done_Conter += Done_Conter
+                case "InProgress_conter" :
+                    InProgress_conter += InProgress_conter
+                case "Deleyed" :
+                    Deleyed_conter += Deleyed_conter
+                case _ :
+                    print("warning : check the status")
+        return (Done_Conter/conter)*100
 #endregion    
  
 #region : General function:
@@ -738,4 +785,8 @@ def getPath_TableList():
 #region : TODO
 #TODO 1 :Logging and sending
 #TODO 2 :List Upgrating in menu
+#-----------------------------------------
+#TODO : در حین نشان دادن لیست ها، وضعیت کلی لیست را نشان بدهد
+#TODO : تاریخ ددلاین هارو هم نشان دهد.
+#TODO : خلاصه وضعیت کلی لیست هار و هنگام شروع برنامه بگوید.
 #endregion
