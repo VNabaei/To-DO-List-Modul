@@ -3,10 +3,11 @@ from datetime import datetime
 import getpass
 import csv
 
+
 #region : the variables in FileModule.py
 # -------------------------------------------------------------
 file_status = ['created', 'edited', 'deleted'] #INFO : Status of files in the database
-Status = ['Done', 'Todo', 'In Progress'] #INFO :Task status in the database
+Status = ['Done', 'Todo', 'In Progress','Deleyed'] #INFO :Task status in the database
 field_Of_ToDoList = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
 #endregion
 
@@ -405,7 +406,7 @@ def show_All_lists():
                 return
             print("the title of active Lists : \n")
             for lst in active_lists:
-                print(f" * {lst.get('Title',)}\n")    
+                print(f" --> Title : {lst.get('Title',)} | Progress percentage : {colored_progress_bar(list_Status(lst.get('path')))}")    
     except ValueError as error :
         print(f"The operation to show the todo list failed. Error:{error}\n")
     
@@ -430,15 +431,39 @@ def Show_List(ToDoList_Path):
     with open(ToDoList_Path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         tasks = [row for row in reader if row.get("file_status", "").lower() != file_status[2]]
-
+        #TODO : show status in tasks
+        ToDo_Conter = 0
+        Done_Conter = 0 
+        InProgress_conter = 0
+        Deleyed_conter = 0
+        for row in tasks :
+            check = row.get('Status')
+            match check :
+                case "Todo" :
+                    ToDo_Conter += 1
+                case "Done":
+                    Done_Conter += 1
+                case "InProgress_conter" :
+                    InProgress_conter += 1
+                case "Deleyed" :
+                    Deleyed_conter += 1
+                case _ :
+                    print("warning : check the status")
+                    
+    Progress_percentage = list_Status(ToDoList_Path)
     if not tasks:
         print("no active task was found")
         return
-
+    print("in this To Do lists :\n")
+    print(f"Progress percentage :  {colored_progress_bar(Progress_percentage)}\n")
+    print("-------------------------")
+    print(f"{Done_Conter} task(S) was Done \n|{InProgress_conter} task(s) in progress \n|{ToDo_Conter} task(s) To Do \n|{Deleyed_conter} task(s) is deleyed \n")
+    print("-------------------------")
     print("Active tasks in list:")
     for task in tasks:
         print(f"Title: {task.get('Title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}| DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
-
+    print("-----------------------------------------------------------------------")
+    
 def delete_List(file_path,tableListPath) :
     '''
     This function, given the given file address, deletes the file and also deletes its row from the list table.
@@ -516,6 +541,31 @@ def change_status_to_delete(file_path,list_Title):
     else:
         print(f"{list_Title} does not exist.")   
 
+def list_Status(ToDoList_Path):
+    with open(ToDoList_Path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        tasks = [row for row in reader if row.get("file_status", "").lower() != file_status[2]]
+        #TODO : show status in tasks
+        ToDo_Conter = 0
+        Done_Conter = 0 
+        InProgress_conter = 0
+        Deleyed_conter = 0
+        conter = 0
+        for row in tasks :
+            check = row.get('Status')
+            conter += 1
+            match check :
+                case "Todo" :
+                    ToDo_Conter += 1
+                case "Done":
+                    Done_Conter += 1
+                case "InProgress_conter" :
+                    InProgress_conter += 1
+                case "Deleyed" :
+                    Deleyed_conter += 1
+                case _ :
+                    print("warning : check the status")
+        return (Done_Conter/conter)*100
 #endregion    
  
 #region : General function:
@@ -634,6 +684,42 @@ def ID_Generator(TodoList_Path,ToDoList_ID) :
     #NOTE : ID format : TDL - {TDL_ID} - TSK - {YYYYMMDDHHMMSS} + {counter of tasks in this TDL file}
     #review : ID is too long, sorry.
 
+def colored_progress_bar(percent: float, length: int = 30) -> str:
+    """
+    This function displays a colored progress bar in proportion to the percentage of progress.
+     
+    Parameter(s):
+    -----------
+    percent : float
+        درصد پیشرفت (۰ تا ۱۰۰)
+    length : int
+        طول نوار پیشرفت (پیش‌فرض ۳۰ کاراکتر)
+
+    Return(s):
+    --------
+    str : نوار پیشرفت رنگی همراه با درصد
+    """
+
+    # محدود کردن درصد بین 0 و 100
+    percent = max(0, min(100, percent))
+
+    # محاسبه‌ی بلوک‌های پر و خالی
+    filled_length = int(length * percent // 100)
+    empty_length = length - filled_length
+
+    # انتخاب رنگ با ANSI escape codes
+    if percent < 40:
+        color = "\033[91m"   # قرمز
+    elif percent < 80:
+        color = "\033[93m"   # زرد
+    else:
+        color = "\033[92m"   # سبز
+
+    reset = "\033[0m"
+    bar = f"{color}{'█' * filled_length}{reset}{'-' * empty_length}"
+
+    return f"[{bar}] {percent}%"
+
 # Get Function :
 #----------------------------------------------------------------------
 
@@ -731,6 +817,8 @@ def getPath_TableList():
     fileTableList_path = os.path.join(foulder_path,"Table_list.csv")
     return fileTableList_path
 
+
+
 #endregion
 
 #endregion
@@ -738,4 +826,8 @@ def getPath_TableList():
 #region : TODO
 #TODO 1 :Logging and sending
 #TODO 2 :List Upgrating in menu
+#-----------------------------------------
+#TODO : در حین نشان دادن لیست ها، وضعیت کلی لیست را نشان بدهد
+#TODO : تاریخ ددلاین هارو هم نشان دهد.
+#TODO : خلاصه وضعیت کلی لیست هار و هنگام شروع برنامه بگوید.
 #endregion
