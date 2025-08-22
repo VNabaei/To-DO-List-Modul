@@ -3,6 +3,7 @@ from datetime import datetime
 import getpass
 import csv
 
+
 #region : the variables in FileModule.py
 # -------------------------------------------------------------
 file_status = ['created', 'edited', 'deleted'] #INFO : Status of files in the database
@@ -405,7 +406,7 @@ def show_All_lists():
                 return
             print("the title of active Lists : \n")
             for lst in active_lists:
-                print(f" * {lst.get('Title',)}\n")    
+                print(f" --> Title : {lst.get('Title',)} | Progress percentage : {colored_progress_bar(list_Status(lst.get('path')))}")    
     except ValueError as error :
         print(f"The operation to show the todo list failed. Error:{error}\n")
     
@@ -439,28 +440,30 @@ def Show_List(ToDoList_Path):
             check = row.get('Status')
             match check :
                 case "Todo" :
-                    ToDo_Conter += ToDo_Conter
+                    ToDo_Conter += 1
                 case "Done":
-                    Done_Conter += Done_Conter
+                    Done_Conter += 1
                 case "InProgress_conter" :
-                    InProgress_conter += InProgress_conter
+                    InProgress_conter += 1
                 case "Deleyed" :
-                    Deleyed_conter += Deleyed_conter
+                    Deleyed_conter += 1
                 case _ :
                     print("warning : check the status")
                     
-
+    Progress_percentage = list_Status(ToDoList_Path)
     if not tasks:
         print("no active task was found")
         return
-    print("in this To Do lists :")
-    print(f"درصد پیشروی لیست :{list_Status(ToDoList_Path)}\n")
-    print("-----------------------------------------------------")
+    print("in this To Do lists :\n")
+    print(f"Progress percentage :  {colored_progress_bar(Progress_percentage)}\n")
+    print("-------------------------")
     print(f"{Done_Conter} task(S) was Done \n|{InProgress_conter} task(s) in progress \n|{ToDo_Conter} task(s) To Do \n|{Deleyed_conter} task(s) is deleyed \n")
+    print("-------------------------")
     print("Active tasks in list:")
     for task in tasks:
         print(f"Title: {task.get('Title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}| DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
-
+    print("-----------------------------------------------------------------------")
+    
 def delete_List(file_path,tableListPath) :
     '''
     This function, given the given file address, deletes the file and also deletes its row from the list table.
@@ -550,16 +553,16 @@ def list_Status(ToDoList_Path):
         conter = 0
         for row in tasks :
             check = row.get('Status')
-            conter +=conter
+            conter += 1
             match check :
                 case "Todo" :
-                    ToDo_Conter += ToDo_Conter
+                    ToDo_Conter += 1
                 case "Done":
-                    Done_Conter += Done_Conter
+                    Done_Conter += 1
                 case "InProgress_conter" :
-                    InProgress_conter += InProgress_conter
+                    InProgress_conter += 1
                 case "Deleyed" :
-                    Deleyed_conter += Deleyed_conter
+                    Deleyed_conter += 1
                 case _ :
                     print("warning : check the status")
         return (Done_Conter/conter)*100
@@ -681,6 +684,42 @@ def ID_Generator(TodoList_Path,ToDoList_ID) :
     #NOTE : ID format : TDL - {TDL_ID} - TSK - {YYYYMMDDHHMMSS} + {counter of tasks in this TDL file}
     #review : ID is too long, sorry.
 
+def colored_progress_bar(percent: float, length: int = 30) -> str:
+    """
+    This function displays a colored progress bar in proportion to the percentage of progress.
+     
+    Parameter(s):
+    -----------
+    percent : float
+        درصد پیشرفت (۰ تا ۱۰۰)
+    length : int
+        طول نوار پیشرفت (پیش‌فرض ۳۰ کاراکتر)
+
+    Return(s):
+    --------
+    str : نوار پیشرفت رنگی همراه با درصد
+    """
+
+    # محدود کردن درصد بین 0 و 100
+    percent = max(0, min(100, percent))
+
+    # محاسبه‌ی بلوک‌های پر و خالی
+    filled_length = int(length * percent // 100)
+    empty_length = length - filled_length
+
+    # انتخاب رنگ با ANSI escape codes
+    if percent < 40:
+        color = "\033[91m"   # قرمز
+    elif percent < 80:
+        color = "\033[93m"   # زرد
+    else:
+        color = "\033[92m"   # سبز
+
+    reset = "\033[0m"
+    bar = f"{color}{'█' * filled_length}{reset}{'-' * empty_length}"
+
+    return f"[{bar}] {percent}%"
+
 # Get Function :
 #----------------------------------------------------------------------
 
@@ -777,6 +816,8 @@ def getPath_TableList():
     foulder_path = os.path.join(current_path,"TodoLists app")
     fileTableList_path = os.path.join(foulder_path,"Table_list.csv")
     return fileTableList_path
+
+
 
 #endregion
 

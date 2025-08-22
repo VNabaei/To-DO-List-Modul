@@ -52,7 +52,7 @@ def edit_menu():
         edit_choice = input("Enter your choice: ")
         
         if edit_choice == "1":
-            print("add task(s) -------------------------\n ")
+            print("----\nadd task(s) -------------------------\n ")
             print("for adding, do this steps :\n")
             FileModule.show_All_lists()
             
@@ -61,7 +61,7 @@ def edit_menu():
             FileModule.Add_Task(todo_list_path ,FileModule.getId(Target_list))
             
         elif edit_choice == "2":
-            print("Edit a task -------------------------\n ")
+            print("----\nEdit a task -------------------------\n ")
             print("for edit, do this steps :\n")
             path_of_list = Show2Select()
             if path_of_list :
@@ -71,7 +71,7 @@ def edit_menu():
                 FileModule.Edit_Task(path_of_list,ETask)
                 
         elif edit_choice == "3":
-            print("Delete a task -------------------------\n ")
+            print("----\nDelete a task -------------------------\n ")
             print("for delete, do this steps :\n")
             path_of_list = Show2Select()
             if path_of_list :
@@ -81,7 +81,7 @@ def edit_menu():
             
             
         elif edit_choice == "4":
-            print("View all tasks in list ----------------\n ")
+            print("----\nView all tasks in list ----------------\n ")
             print("select the title of the lists : \n")
             FileModule.show_All_lists()
             
@@ -91,7 +91,7 @@ def edit_menu():
           
 
         elif edit_choice == "5":
-            print("Delete a list -------------------------\n ")
+            print("----\nDelete a list -------------------------\n ")
 
             FileModule.show_All_lists()
             print("select the title of the lists : \n")
@@ -109,14 +109,14 @@ def edit_menu():
                 print("the process canceled")
             
         elif edit_choice == "6":
-            print("Update the List -----------------------\n ")
+            print("----\nUpdate the List -----------------------\n ")
             #TODO : implement update feature later
             
         elif edit_choice == "7":
-            print("main menu -----------------------------\n ")
+            print("\nmain menu -----------------------------\n ")
             break
         elif edit_choice == "8":
-            print("exiting -------------------------------\n ")
+            print("----\nexiting -------------------------------\n ")
             print("(T_T)\n ")
             exit()
             
@@ -145,7 +145,7 @@ def main_menu():
         main_choice = input("Enter your choice: ")
         
         if main_choice == "1":
-            print("Creating new list ...............................\n ")
+            print("\nCreating new list ...............................\n ")
             #---- input the input_Title of the list
             List_Title = input("Enter the Title of the list: ")          
             #---- create a new list
@@ -158,7 +158,7 @@ def main_menu():
             edit_menu()
             
         elif main_choice == "3":
-            print("Showing : .................................\n ")
+            print("\nShowing : .................................\n ")
             FileModule.show_All_lists()
             Target_list= input("what list do you want to show?\n:")
             todo_list_path = FileModule.getPath(Target_list)    
@@ -167,7 +167,7 @@ def main_menu():
             
             
         elif main_choice == "4":
-            print("Exiting from prograss .....................\n ")
+            print("\nExiting from prograss .....................\n ")
 
             print("Khosh Galdin")
             break
@@ -182,7 +182,7 @@ def main_menu():
 #endregion            
                         
 #region :   ---------- run the program 
-print("welcome to the ToDolist app")
+print("\nwelcome to the ToDolist app")
 if __name__ == "__main__":
     main_menu()
         
