@@ -8,7 +8,7 @@ import csv
 # -------------------------------------------------------------
 file_status = ['created', 'edited', 'deleted'] #INFO : Status of files in the database
 Status = ['Done', 'Todo', 'In Progress','Deleyed'] #INFO :Task status in the database
-field_Of_ToDoList = ["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status'] 
+field_Of_ToDoList = ["Id","Title","Descreaption","DeadLine","Status","Created_at","Edited_by","Create_bY",'file_status'] 
 #endregion
 
 #region : the functions in FileModule.py
@@ -19,10 +19,10 @@ def Add_List_in_Table_list(ToDoList_Folder,input_Title):
     try :
         with open(fileTableList_path, 'r', newline='', encoding='utf-8') as file:
             reader = list(csv.DictReader(file))
-            field_names = reader[0].keys() if reader else["id","Title","creator","time","file_status","path"]    # Get field Titles from the first table
+            field_names = reader[0].keys() if reader else["Id","Title","creator","time","file_status","path"]    # Get field Titles from the first table
             data = [
                 {
-                    'id':datetime.today().strftime("%Y%m%d%H%M%S")
+                    'Id':datetime.today().strftime("%Y%m%d%H%M%S")
                     ,'Title' : input_Title
                     ,'creator' : Get_User()
                     ,'time' : datetime.today()
@@ -49,11 +49,11 @@ def Foulder_of_ToDoList_Creator (ToDoList_Folder,input_Title):
         os.makedirs(ToDoList_Folder)
         fileTableList_path = os.path.join(ToDoList_Folder,"Table_list.csv") #INFO : creat path 
         #INFO : Create a table containing list information
-        fieds_of_table_list = ['id','Title','creator','time','file_status','path']
+        fieds_of_table_list = ['Id','Title','creator','time','file_status','path']
     
         data = [
             {
-                'id':datetime.today().strftime("%Y%m%d%H%M%S")
+                'Id':datetime.today().strftime("%Y%m%d%H%M%S")
                 ,'Title' : input_Title
                 ,'creator' : Get_User()
                 ,'time' : datetime.today()
@@ -128,7 +128,7 @@ def Create_New_list(input_Title :str):
             reader = list(csv.DictReader(f))
             for row in reader :
                 if row.get("Title","") == input_Title:
-                     ToDoList_id = row.get("id","")
+                     ToDoList_id = row.get("Id","")
        
         Add_Task(file_path,ToDoList_id)
     else:
@@ -175,12 +175,12 @@ def Add_Task (ToDoList_Path, ToDoList_Id = None ):
             break
         else :
             task= {
-                "ID" : ID_Generator(ToDoList_Path,ToDoList_Id) 
+                "Id" : ID_Generator(ToDoList_Path,ToDoList_Id) 
                 ,"Title": task_input_name
                 ,"Descreaption" : input("add Description : ")
                 ,"DeadLine" : Deadline_Creator()
                 ,"Status" : Status[1]  # 'Todo' as default
-                ,"Creat_at" :datetime.today().date()
+                ,"Created_at" :datetime.today().date()
                 ,"Edited_by" : Editor() 
                 ,"Create_bY" : Get_User()     
                 ,"file_status": file_status[0]  # 'created'        
@@ -238,7 +238,7 @@ def Show_the_task(file_path,Task):
         reader = csv.DictReader(f)
         tasks = [row for row in reader if (row.get("Statusfile", "").lower() != "delete") and (row.get("title", "").strip().lower() == Task.strip().lower())]
         for task in tasks:
-            print(f"Title: {task.get('title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
+            print(f"Title: {task.get('title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Created_at', '')} ")
 
 def Show_List_ALLTask(ToDoList_Path):
     #NOTE :This function is currently not used in the application menu.
@@ -259,9 +259,19 @@ def Show_List_ALLTask(ToDoList_Path):
     if not os.path.exists(ToDoList_Path):
         print(f"{ToDoList_Path} does not exist.")
         return
-    with open(ToDoList_Path, "r") as f:
-        content = f.read()
-        print(content)  
+    # with open(ToDoList_Path, "r") as f:
+    #     content = f.read()
+    #     print(content)  
+    with open(ToDoList_Path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        tasks = [row for row in reader if row.get("file_status", "").lower() != file_status[2]]
+    if not tasks:
+        print("no active task was found")
+        return
+    for task in tasks:
+        print(f"Title: {task.get('Title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}| DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Created_at', '')}")
+    
+    
  
 def delete_Task(file_path,Task):
     '''
@@ -285,7 +295,7 @@ def delete_Task(file_path,Task):
     else:
         with open(file_path, 'r', encoding='utf-8') as file:
             tasks = list(csv.DictReader(file))
-            field_names = tasks[0].keys() if tasks else["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status']    # Get field input_Titles from the first table
+            field_names = tasks[0].keys() if tasks else["Id","Title","Descreaption","DeadLine","Status","Created_at","Edited_by","Create_bY",'file_status']    # Get field input_Titles from the first table
 
         task_found = False
         data = []
@@ -333,7 +343,7 @@ def Edit_Task(file_path,Task):
     else:
         with open(file_path, 'r',newline='', encoding='utf-8') as file:
             tasks = list(csv.DictReader(file))
-            field_names = tasks[0].keys() if tasks else["ID","Title","Descreaption","DeadLine","Status","Creat_at","Edited_by","Create_bY",'file_status']    # Get field input_Titles from the first table
+            field_names = tasks[0].keys() if tasks else["Id","Title","Descreaption","DeadLine","Status","Created_at","Edited_by","Create_bY",'file_status']    # Get field input_Titles from the first table
 
         task_found = False
         for task in tasks:
@@ -367,6 +377,32 @@ def Edit_Task(file_path,Task):
                 w.writerows(tasks)
         except ValueError as error :
             print(f"The task edit operation failed while overwriting the file. Error:{error}\n")
+
+
+def task_deadline_status(deadline_str):
+    """
+    Returns the status of a task based on its deadline.
+    
+    Parameters:
+    -----------
+    deadline_str : str
+        Deadline in 'YYYY/MM/DD' format
+
+    Returns:
+    --------
+    str : "Active", "Due Today", or "Expired"
+    """
+    try:
+        deadline_date = datetime.strptime(deadline_str, "%Y/%m/%d").date()
+        today = datetime.today().date()
+        if deadline_date < today:
+            return "Expired"
+        elif deadline_date == today:
+            return "Due Today"
+        else:
+            return "Active"
+    except Exception:
+        return "Unknown situation in deadline calculate"
                 
 #endregion    
      
@@ -425,8 +461,7 @@ def Show_List(ToDoList_Path):
     None
     '''
     if not os.path.exists(ToDoList_Path):
-        print(f"{ToDoList_Path} does not exist.")
-        return
+        raise FileNotFoundError(f"{ToDoList_Path} does not exist.")
 
     with open(ToDoList_Path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -458,10 +493,28 @@ def Show_List(ToDoList_Path):
     print(f"Progress percentage :  {colored_progress_bar(Progress_percentage)}\n")
     print("-------------------------")
     print(f"{Done_Conter} task(S) was Done \n|{InProgress_conter} task(s) in progress \n|{ToDo_Conter} task(s) To Do \n|{Deleyed_conter} task(s) is deleyed \n")
-    print("-------------------------")
-    print("Active tasks in list:")
-    for task in tasks:
-        print(f"Title: {task.get('Title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}| DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Creat_at', '')}")
+    print("Task status by deadline -------------------------\n")
+    
+    #TODO : نمایش تسک ها بر اساس تاخیر ددلاین 
+    #the colors :
+    colorExpired = "\033[91m" 
+    colorDue_Today = "\033[93m"
+    colorActive = "\033[92m"
+    reset = "\033[0m"
+    
+    print (f"{colorExpired}Expired{reset} :\n")
+    print(list(row.get('Title') for row in tasks if task_deadline_status(row.get("DeadLine"))== "Expired" ))
+    # print("--------------------\n")
+    print (f"\n{colorDue_Today}Due Today {reset}:\n")
+    print(list (row.get('Title') for row in tasks if task_deadline_status(row.get("DeadLine"))== "Due Today" ))
+    # print("--------------------\n")
+    print (f"\n{colorActive}Active {reset}:\n")
+    print(list(row.get('Title') for row in tasks if task_deadline_status(row.get("DeadLine"))== "Active" ))
+
+
+    # print("Active tasks in list:")
+    # for task in tasks:
+    #     print(f"Title: {task.get('Title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}| DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Created_at', '')}")
     print("-----------------------------------------------------------------------")
     
 def delete_List(file_path,tableListPath) :
@@ -485,7 +538,7 @@ def delete_List(file_path,tableListPath) :
         os.remove(file_path)
         with open (tableListPath,'r',encoding='utf-8',newline='') as f:
             lists = list(csv.DictReader(f))
-            field_names = lists[0].keys() if lists else ['id','Title','creator','time','file_status']
+            field_names = lists[0].keys() if lists else ['Id','Title','creator','time','file_status']
             rows = []
             for lst in lists :
                 if lst.get("path") != file_path:
@@ -523,7 +576,7 @@ def change_status_to_delete(file_path,list_Title):
     if os.path.exists(file_path):          
         with open(file_path, 'r', encoding='utf-8') as file:
             lists = list(csv.DictReader(file))
-            field_names = lists[0].keys() if lists else ['id','Title','creator','time','file_status']
+            field_names = lists[0].keys() if lists else ['Id','Title','creator','time','file_status']
         list_found = False
         for lst in lists:
             if lst['Title'].strip().lower() == list_Title.strip().lower():
@@ -565,7 +618,12 @@ def list_Status(ToDoList_Path):
                     Deleyed_conter += 1
                 case _ :
                     print("warning : check the status")
-        return (Done_Conter/conter)*100
+        try : 
+            return  (Done_Conter/conter)*100
+        except :
+            print("There is no defined task for this To Do list.")
+            return 0
+            
 #endregion    
  
 #region : General function:
@@ -664,7 +722,7 @@ def ID_Generator(TodoList_Path,ToDoList_ID) :
 
         if rows:
             last_row = rows[-1]
-            id = last_row["ID"]
+            id = last_row["Id"]
      
             x = int(id[43:]) #NOTE : It only works for this ID format. 
             x += 1
@@ -792,7 +850,7 @@ def getId(list_Title: str, task_title: str = None):
                         task_reader = csv.DictReader(task_file)
                         for task in task_reader:
                             if task.get("Title", "").strip().lower() == task_title.strip().lower():
-                                return task.get("ID")
+                                return task.get("Id")
                 else:
                     
                     return None

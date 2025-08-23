@@ -1,5 +1,11 @@
 import Lists_Task
 import FileModule
+#region : variable
+WarningColor = "\033[91m" 
+AtentionColor = "\033[93m"
+resetColor = "\033[0m"
+
+#endregion
 
 #region : operation function:
 
@@ -184,10 +190,9 @@ def main_menu():
             try :
                 Target_list= input("what list do you want to show?\n:")
                 todo_list_path = FileModule.getPath(Target_list)    
-                
                 FileModule.Show_List(todo_list_path)
-            except ValueError as erorr :
-                print("Something is wrong with the input variable. Erorr : {erorr}")
+            except Exception :
+                print(f"{WarningColor}Something is wrong with the input variable.{resetColor}")
             
             
         elif main_choice == "4":
@@ -197,9 +202,9 @@ def main_menu():
             break
         
         else :
-            print("Unknow input .-.-.-.-.-.-.-.-.-.-.-.-.-..-.--.-.-.-.-.-\n ")
+            print(f"{AtentionColor}Unknow input .-.-.-.-.-.-.-.-.-.-.-.-.-..-.--.-.-.-.-.-\n ")
 
-            print("wrong input please try again :)")
+            print(f"wrong input please try again :){resetColor}")
 
 #endregion        
 
