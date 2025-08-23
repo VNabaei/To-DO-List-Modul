@@ -1,5 +1,11 @@
 import Lists_Task
 import FileModule
+#region : variable
+WarningColor = "\033[91m" 
+AtentionColor = "\033[93m"
+resetColor = "\033[0m"
+
+#endregion
 
 #region : operation function:
 
@@ -57,8 +63,11 @@ def edit_menu():
             FileModule.show_All_lists()
             
             Target_list= input("Which list do you want to add task(s)? ")
-            todo_list_path = FileModule.getPath(Target_list)  
-            FileModule.Add_Task(todo_list_path ,FileModule.getId(Target_list))
+            try :
+                todo_list_path = FileModule.getPath(Target_list)  
+                FileModule.Add_Task(todo_list_path ,FileModule.getId(Target_list))
+            except ValueError as erorr :
+                print("Something is wrong with the input variable. Erorr : {erorr}")
             
         elif edit_choice == "2":
             print("----\nEdit a task -------------------------\n ")
@@ -66,9 +75,14 @@ def edit_menu():
             path_of_list = Show2Select()
             if path_of_list :
                 ETask = input("Enter the Title of the task to edit: ")
+                try :
+                    task_path = FileModule.getPath(ETask)
+                    FileModule.Edit_Task(path_of_list,ETask)
+                except ValueError as er :
+                    print("Something is wrong with the input variable. Erorr : {er}")
+                    
                 # if the task is found, you would update it here
-                task_path = FileModule.getPath(ETask)
-                FileModule.Edit_Task(path_of_list,ETask)
+
                 
         elif edit_choice == "3":
             print("----\nDelete a task -------------------------\n ")
@@ -76,8 +90,11 @@ def edit_menu():
             path_of_list = Show2Select()
             if path_of_list :
                 deleteTask = input("Enter the Title of the task to delete: ")
-                FileModule.delete_Task(path_of_list,deleteTask)
-                print("The process was completed successfully.")
+                try :
+                    FileModule.delete_Task(path_of_list,deleteTask)
+                    print("The process was completed successfully.")
+                except ValueError as erorr :
+                    print("Something is wrong with the input variable. Erorr : {erorr}")
             
             
         elif edit_choice == "4":
@@ -86,8 +103,12 @@ def edit_menu():
             FileModule.show_All_lists()
             
             Target_list = input("input the title: \n")
-            path_of_list = FileModule.getPath(Target_list)
-            FileModule.Show_List(path_of_list)
+            try :
+                
+                path_of_list = FileModule.getPath(Target_list)
+                FileModule.Show_List(path_of_list)
+            except ValueError as erorr :
+                print("Something is wrong with the input variable. Erorr : {erorr}")
           
 
         elif edit_choice == "5":
@@ -95,18 +116,21 @@ def edit_menu():
 
             FileModule.show_All_lists()
             print("select the title of the lists : \n")
-            Target_list = input("input the title: \n")
-            path_of_list = FileModule.getPath(Target_list)
-            
-            confirm_delete = input("Do you want to delete it completely? (y/n) ")
+            try :
+                Target_list = input("input the title: \n")
+                path_of_list = FileModule.getPath(Target_list)
+                confirm_delete = input("Do you want to delete it completely? (y/n) ")
+                
             #-------------------------------
-            tableListPath = FileModule.getPath_TableList()
+                tableListPath = FileModule.getPath_TableList()
             #-------------------------------
-            if  confirm_delete.lower().strip() == 'y':
-                FileModule.delete_List(path_of_list,tableListPath) 
-                print("List deleted successfully")  
-            else:
-                print("the process canceled")
+                if  confirm_delete.lower().strip() == 'y':
+                    FileModule.delete_List(path_of_list,tableListPath) 
+                    print("List deleted successfully")  
+                else:
+                    print("the process canceled")
+            except ValueError as erorr :
+                print("Something is wrong with the input variable. Erorr : {erorr}")
             
         elif edit_choice == "6":
             print("----\nUpdate the List -----------------------\n ")
@@ -121,7 +145,10 @@ def edit_menu():
             exit()
             
         else:
-            print("wrong input please try again later :)")
+            print("wrong input please try again later :)\n")
+            print("Returning to the main menu")
+            print("------------------------------------------------")
+            break
 #endregion            
 
 #region :  main menu       
@@ -160,10 +187,12 @@ def main_menu():
         elif main_choice == "3":
             print("\nShowing : .................................\n ")
             FileModule.show_All_lists()
-            Target_list= input("what list do you want to show?\n:")
-            todo_list_path = FileModule.getPath(Target_list)    
-
-            FileModule.Show_List(todo_list_path)
+            try :
+                Target_list= input("what list do you want to show?\n:")
+                todo_list_path = FileModule.getPath(Target_list)    
+                FileModule.Show_List(todo_list_path)
+            except Exception :
+                print(f"{WarningColor}Something is wrong with the input variable.{resetColor}")
             
             
         elif main_choice == "4":
@@ -173,9 +202,9 @@ def main_menu():
             break
         
         else :
-            print("Unknow .-.-.-.-.-.-.-.-.-.-.-.-.-..-.--.-.-.-.-.-\n ")
+            print(f"{AtentionColor}Unknow input .-.-.-.-.-.-.-.-.-.-.-.-.-..-.--.-.-.-.-.-\n ")
 
-            print("wrong input please try again later :)")
+            print(f"wrong input please try again :){resetColor}")
 
 #endregion        
 
