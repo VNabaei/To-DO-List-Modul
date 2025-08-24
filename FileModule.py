@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime,date
 import getpass
 import csv
 
@@ -171,7 +171,7 @@ def Add_Task (ToDoList_Path, ToDoList_Id = None ):
      
     tasks = []
     while True :
-        task_input_name =input("input the task, for break,input nothing! \n: ")
+        task_input_name =input("input the task, for break,input nothing!:\n ")
         if task_input_name == "":
             break
         else :
@@ -403,7 +403,36 @@ def task_deadline_status(deadline_str):
             return "Active"
     except Exception:
         return "Unknown situation in deadline calculate"
-                
+
+
+def check_deadline_status(deadline_str: str) -> str:
+    """
+    Checks the status of a task based on its deadline.
+    Accepts 'M/D/YYYY', 'MM/DD/YYYY', 'YYYY/MM/DD', or 'YYYY-M-D' formats.
+
+    Returns: "Expired", "Due Today", "Active", or "Invalid Format"
+    """
+    if not deadline_str or deadline_str.strip() == "":
+        return "Invalid Format"
+
+    # لیست فرمت‌های ممکن
+    possible_formats = ["%m/%d/%Y", "%Y/%m/%d", "%Y-%m-%d"]
+
+    for fmt in possible_formats:
+        try:
+            deadline_date = datetime.strptime(deadline_str.strip(), fmt).date()
+            today = datetime.today().date()
+
+            if deadline_date < today:
+                return "Expired"
+            elif deadline_date == today:
+                return "Due Today"
+            else:
+                return "Active"
+        except ValueError:
+            continue
+
+    return "Invalid Format"                
 #endregion    
      
    
@@ -504,13 +533,14 @@ def Show_List(ToDoList_Path):
     reset = "\033[0m"
     
     print (f"{colorExpired}Expired{reset} :\n")
-    print(list(row.get('Title') for row in tasks if task_deadline_status(row.get("DeadLine"))== "Expired" ))
+    
+    print(list(row.get('Title') for row in tasks if check_deadline_status(row.get("DeadLine"))== "Expired" ))
     # print("--------------------\n")
     print (f"\n{colorDue_Today}Due Today {reset}:\n")
-    print(list (row.get('Title') for row in tasks if task_deadline_status(row.get("DeadLine"))== "Due Today" ))
+    print(list (row.get('Title') for row in tasks if check_deadline_status(row.get("DeadLine"))== "Due Today" ))
     # print("--------------------\n")
     print (f"\n{colorActive}Active {reset}:\n")
-    print(list(row.get('Title') for row in tasks if task_deadline_status(row.get("DeadLine"))== "Active" ))
+    print(list(row.get('Title') for row in tasks if check_deadline_status(row.get("DeadLine"))== "Active" ))
 
 
     # print("Active tasks in list:")
@@ -779,6 +809,42 @@ def colored_progress_bar(percent: float, length: int = 30) -> str:
 
     return f"[{bar}] {percent}%"
 
+# def Deadline_Creator() -> str:
+#     """
+#     Asks the user for a deadline date in YYYY/MM/DD format.
+#     Ensures the date is valid and in the future. If no input is provided,
+#     today's date will be used instead.
+
+#     Parameters:
+#     -----------
+#     None
+
+#     Returns:
+#     --------
+#     deadline_date : str
+#         The validated deadline date.
+#     """
+#     while True:
+#         deadline_input = input("Enter the deadline (YYYY/MM/DD) e.g.: 2025/07/31: ").strip()
+        
+#         if deadline_input:
+#             try:
+#                 deadline_date = datetime.strptime(deadline_input, "%Y/%m/%d").date()
+                
+#                 if deadline_date < datetime.today().date():
+#                     print("⚠️  Deadline cannot be in the past. Please try again.")
+#                     continue
+                
+#                 return deadline_date
+
+#             except ValueError:
+#                 print("Invalid format! Please use YYYY/MM/DD (e.g.: 2025/07/31).")
+#                 continue
+#         else:
+#             deadline_date = datetime.today().date()
+#             print(f" Deadline is set to today: {deadline_date}")
+#             return deadline_date
+
 # Get Function :
 #----------------------------------------------------------------------
 
@@ -886,7 +952,7 @@ def getPath_TableList():
 #TODO 1 :Logging and sending
 #TODO 2 :List Upgrating in menu
 #-----------------------------------------
-#TODO : در حین نشان دادن لیست ها، وضعیت کلی لیست را نشان بدهد
+
 #TODO : تاریخ ددلاین هارو هم نشان دهد.
-#TODO : خلاصه وضعیت کلی لیست هار و هنگام شروع برنامه بگوید.
+
 #endregion

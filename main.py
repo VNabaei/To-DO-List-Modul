@@ -169,6 +169,8 @@ def main_menu():
     ----------
     None
     '''
+    print(f"---------------- To Do List(s) in this Application ----------------\n")
+    FileModule.show_All_lists()
     while True:
 
         print ("\nMenu :")
@@ -215,8 +217,10 @@ def main_menu():
 #endregion            
                         
 #region :   ---------- run the program 
-print("\nwelcome to the ToDolist app")
+print("\nwelcome to the ToDolist app\n")
+
 if __name__ == "__main__":
+
     main_menu()
         
 #endregion        
