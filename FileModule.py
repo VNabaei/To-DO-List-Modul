@@ -8,7 +8,8 @@ import csv
 # -------------------------------------------------------------
 file_status = ['created', 'edited', 'deleted'] #INFO : Status of files in the database
 Status = ['Done', 'Todo', 'In Progress','Deleyed'] #INFO :Task status in the database
-field_Of_ToDoList = ["Id","Title","Descreaption","DeadLine","Status","Created_at","Edited_by","Create_bY",'file_status'] 
+field_Of_ToDoList = ['Id','Title','Descreaption','DeadLine','Status','Created_at','Edited_by','Create_bY','file_status'] 
+field_of_TableList = ['Id','Title','creator','Created_at','file_status','path']
 #endregion
 
 #region : the functions in FileModule.py
@@ -19,13 +20,13 @@ def Add_List_in_Table_list(ToDoList_Folder,input_Title):
     try :
         with open(fileTableList_path, 'r', newline='', encoding='utf-8') as file:
             reader = list(csv.DictReader(file))
-            field_names = reader[0].keys() if reader else["Id","Title","creator","time","file_status","path"]    # Get field Titles from the first table
+            field_names = reader[0].keys() if reader else field_of_TableList    # Get field Titles from the first table
             data = [
                 {
                     'Id':datetime.today().strftime("%Y%m%d%H%M%S")
                     ,'Title' : input_Title
                     ,'creator' : Get_User()
-                    ,'time' : datetime.today()
+                    ,'Created_at' : datetime.today()
                     ,'file_status' : 'created'
                     ,'path' : os.path.join(ToDoList_Folder,f"{input_Title}.csv") #INFO : We need this to check the to do list ID
                     }
@@ -49,14 +50,14 @@ def Foulder_of_ToDoList_Creator (ToDoList_Folder,input_Title):
         os.makedirs(ToDoList_Folder)
         fileTableList_path = os.path.join(ToDoList_Folder,"Table_list.csv") #INFO : creat path 
         #INFO : Create a table containing list information
-        fieds_of_table_list = ['Id','Title','creator','time','file_status','path']
+        fieds_of_table_list = field_of_TableList
     
         data = [
             {
                 'Id':datetime.today().strftime("%Y%m%d%H%M%S")
                 ,'Title' : input_Title
                 ,'creator' : Get_User()
-                ,'time' : datetime.today()
+                ,'Created_at' : datetime.today()
                 ,'file_status' : 'created'
                 ,'path' : os.path.join(ToDoList_Folder,f"{input_Title}.csv") #INFO : We need this to check the to do list ID
             }
@@ -241,8 +242,7 @@ def Show_the_task(file_path,Task):
             print(f"Title: {task.get('title', '')} |Descreaption: {task.get('Descreaption', '')} | Status: {task.get('Status', '')}DeadLine: {task.get('DeadLine', '')} | Created at: {task.get('Created_at', '')} ")
 
 def Show_List_ALLTask(ToDoList_Path):
-    #NOTE :This function is currently not used in the application menu.
-    #DEPRECATED : For User friendly, use the Show_list function instead of this function.
+
     '''
     Displays all tasks in full detail.
     
@@ -295,7 +295,7 @@ def delete_Task(file_path,Task):
     else:
         with open(file_path, 'r', encoding='utf-8') as file:
             tasks = list(csv.DictReader(file))
-            field_names = tasks[0].keys() if tasks else["Id","Title","Descreaption","DeadLine","Status","Created_at","Edited_by","Create_bY",'file_status']    # Get field input_Titles from the first table
+            field_names = tasks[0].keys() if tasks else field_Of_ToDoList    # Get field input_Titles from the first table
 
         task_found = False
         data = []
@@ -343,7 +343,7 @@ def Edit_Task(file_path,Task):
     else:
         with open(file_path, 'r',newline='', encoding='utf-8') as file:
             tasks = list(csv.DictReader(file))
-            field_names = tasks[0].keys() if tasks else["Id","Title","Descreaption","DeadLine","Status","Created_at","Edited_by","Create_bY",'file_status']    # Get field input_Titles from the first table
+            field_names = tasks[0].keys() if tasks else field_Of_ToDoList    # Get field input_Titles from the first table
 
         task_found = False
         for task in tasks:
@@ -483,7 +483,8 @@ def Show_List(ToDoList_Path):
                 case "Deleyed" :
                     Deleyed_conter += 1
                 case _ :
-                    print("warning : check the status")
+                    # print("warning : check the status")
+                    print("\n")
                     
     Progress_percentage = list_Status(ToDoList_Path)
     if not tasks:
@@ -538,7 +539,7 @@ def delete_List(file_path,tableListPath) :
         os.remove(file_path)
         with open (tableListPath,'r',encoding='utf-8',newline='') as f:
             lists = list(csv.DictReader(f))
-            field_names = lists[0].keys() if lists else ['Id','Title','creator','time','file_status']
+            field_names = lists[0].keys() if lists else field_of_TableList
             rows = []
             for lst in lists :
                 if lst.get("path") != file_path:
@@ -576,7 +577,7 @@ def change_status_to_delete(file_path,list_Title):
     if os.path.exists(file_path):          
         with open(file_path, 'r', encoding='utf-8') as file:
             lists = list(csv.DictReader(file))
-            field_names = lists[0].keys() if lists else ['Id','Title','creator','time','file_status']
+            field_names = lists[0].keys() if lists else field_of_TableList
         list_found = False
         for lst in lists:
             if lst['Title'].strip().lower() == list_Title.strip().lower():
@@ -608,13 +609,13 @@ def list_Status(ToDoList_Path):
             check = row.get('Status')
             conter += 1
             match check :
-                case "Todo" :
+                case 'Todo' :
                     ToDo_Conter += 1
-                case "Done":
+                case 'Done':
                     Done_Conter += 1
-                case "InProgress_conter" :
+                case 'In Progress' :
                     InProgress_conter += 1
-                case "Deleyed" :
+                case 'Deleyed' :
                     Deleyed_conter += 1
                 case _ :
                     print("warning : check the status")

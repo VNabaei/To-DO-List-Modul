@@ -28,9 +28,12 @@ def Show2Select():
         try :
             path_of_list = FileModule.getPath(Target_list)
             FileModule.Show_List(path_of_list)
+            
+            print("all task(s) :\n")
+            FileModule.Show_List_ALLTask(path_of_list)
             return path_of_list
         except Exception as error:
-            print(f" Error : list not found.\n detail:({error})")
+            print(f"{WarningColor} Error : list not found.\n detail:({error}){resetColor}")
             return None
 
 #endregion
@@ -66,8 +69,8 @@ def edit_menu():
             try :
                 todo_list_path = FileModule.getPath(Target_list)  
                 FileModule.Add_Task(todo_list_path ,FileModule.getId(Target_list))
-            except ValueError as erorr :
-                print("Something is wrong with the input variable. Erorr : {erorr}")
+            except Exception :
+                print(f"{AtentionColor}Something is wrong with the input variable. Erorr :{resetColor}")
             
         elif edit_choice == "2":
             print("----\nEdit a task -------------------------\n ")
@@ -78,8 +81,8 @@ def edit_menu():
                 try :
                     task_path = FileModule.getPath(ETask)
                     FileModule.Edit_Task(path_of_list,ETask)
-                except ValueError as er :
-                    print("Something is wrong with the input variable. Erorr : {er}")
+                except Exception :
+                    print(f"{AtentionColor}Something is wrong with the input variable. Erorr :{resetColor}")
                     
                 # if the task is found, you would update it here
 
@@ -93,9 +96,9 @@ def edit_menu():
                 try :
                     FileModule.delete_Task(path_of_list,deleteTask)
                     print("The process was completed successfully.")
-                except ValueError as erorr :
-                    print("Something is wrong with the input variable. Erorr : {erorr}")
-            
+                except Exception :
+                    print(f"{AtentionColor}Something is wrong with the input variable. Erorr :{resetColor}")
+                 
             
         elif edit_choice == "4":
             print("----\nView all tasks in list ----------------\n ")
@@ -107,9 +110,9 @@ def edit_menu():
                 
                 path_of_list = FileModule.getPath(Target_list)
                 FileModule.Show_List(path_of_list)
-            except ValueError as erorr :
-                print("Something is wrong with the input variable. Erorr : {erorr}")
-          
+            except Exception :
+                print(f"{AtentionColor}Something is wrong with the input variable. Erorr :{resetColor}")
+                 
 
         elif edit_choice == "5":
             print("----\nDelete a list -------------------------\n ")
@@ -128,9 +131,10 @@ def edit_menu():
                     FileModule.delete_List(path_of_list,tableListPath) 
                     print("List deleted successfully")  
                 else:
-                    print("the process canceled")
-            except ValueError as erorr :
-                print("Something is wrong with the input variable. Erorr : {erorr}")
+                    print(f"{AtentionColor}the process canceled{resetColor}")
+            except Exception :
+                print(f"{AtentionColor}Something is wrong with the input variable. Erorr :{resetColor}")
+                 
             
         elif edit_choice == "6":
             print("----\nUpdate the List -----------------------\n ")
@@ -145,8 +149,8 @@ def edit_menu():
             exit()
             
         else:
-            print("wrong input please try again later :)\n")
-            print("Returning to the main menu")
+            print(f"{AtentionColor}wrong input please try again later :)\n")
+            print(f"Returning to the main menu{resetColor}")
             print("------------------------------------------------")
             break
 #endregion            
